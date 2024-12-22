@@ -383,7 +383,7 @@
     </div>
 
     <!-- Submit button for form -->
-    <button type="button" id="saveCheck">Save</button>
+    <button type="button" id="Logcheck">Log</button>
 
 
 
@@ -442,8 +442,53 @@
         const logDateInput = document.getElementById("logDate");
         const today = new Date().toISOString().split('T')[0];
         logDateInput.value = today;
-        //await fetchAndDisplayWorkoutLog(today);
+    
+        const username = sessionStorage.getItem('username');
+        const workoutChecklistContainer = document.getElementById('workoutChecklist');
+        const selectedDate = logDateInput.value;
+        
+
+
+
+        try {
+            // Fetch workouts and statuses for the user
+            const workouts = await fetchWorkouts(username);
+            if (!workouts) {
+                console.log('No workouts found.');
+                return;
+            }
+    
+            const workoutStatuses = await fetchWorkoutStatuses(username, selectedDate);
+            if (!workoutStatuses) {
+                console.log('No workout statuses found.');
+                return;
+            }
+    
+            // Clear previous checklist entries
+            workoutChecklistContainer.innerHTML = '';
+    
+            // If no workouts, inform the user
+            if (workouts.length === 0) {
+                workoutChecklistContainer.innerHTML = '<p>No workouts found.</p>';
+                return;
+            }
+    
+            // Create and display the checklist of workouts
+            workouts.forEach(workout => {
+                const workoutItem = createWorkoutItem(workout, workoutStatuses);
+                workoutChecklistContainer.appendChild(workoutItem);
+            });
+    
+            // Update checkboxes after displaying the list
+            updateCheckboxes(workoutStatuses, workouts);
+    
+        } catch (error) {
+            console.error('Error during page load:', error);
+            alert('An error occurred while fetching data.');
+        }
+
     });
+    
 
 
 
@@ -547,20 +592,36 @@ document.getElementById('saveWorkout').onclick = async function(event) {
 
 
 document.addEventListener('DOMContentLoaded', async () => {
-    const username = sessionStorage.getItem('username'); // Get username from session storage
-    const workoutChecklistContainer = document.getElementById('workoutChecklist'); // The container where the workouts will be displayed
-    const saveButton = document.getElementById('saveChangesButton'); // The "Save Changes" button
-    const logDateInput = document.getElementById('logDate'); // The date input field
-    const selectedDate = logDateInput.value; // Get the selected date
+    const username = sessionStorage.getItem('username');
+    const workoutChecklistContainer = document.getElementById('workoutChecklist');
+    const logDateInput = document.getElementById('logDate');
+    
+
+        // Set today's date as the default value for the date input
+        if (!logDateInput.value) {
+            const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD format
+            logDateInput.value = today;
+        }
+    
+    let selectedDate = logDateInput.value;
+    let workoutStatuses = [];
 
     try {
-        // Fetch all workouts for the user
+        // Fetch workouts and statuses for the user
         const workouts = await fetchWorkouts(username);
-        if (!workouts) return;
+        if (!workouts) {
+            console.log('No workouts found.');
+            return;
+        }
 
-        // Fetch workout statuses for the user
-        const workoutStatuses = await fetchWorkoutStatuses(username, selectedDate);
-        if (!workoutStatuses) return;
+        workoutStatuses = await fetchWorkoutStatuses(username, selectedDate);
+        if (!workoutStatuses || workoutStatuses.length === 0) {
+            // No workout statuses found for the selected date
+            alert('No workout statuses found for the selected date.');
+            // Reset checkboxes to their default state (unticked)
+            
+            return;
+        }
 
         // Clear previous checklist entries
         workoutChecklistContainer.innerHTML = '';
@@ -571,61 +632,50 @@ document.addEventListener('DOMContentLoaded', async () => {
             return;
         }
 
-        // Create a checklist of logged workouts
+        // Create and display the checklist of workouts
         workouts.forEach(workout => {
             const workoutItem = createWorkoutItem(workout, workoutStatuses);
             workoutChecklistContainer.appendChild(workoutItem);
         });
 
-        // Handle "Save Changes" button click
-        saveCheck.addEventListener('click', async () => {
-            await saveWorkoutStatuses(workoutChecklistContainer, username, selectedDate);
-        });
+        // Update checkboxes after displaying the list
+        updateCheckboxes(workoutStatuses, workouts);
 
     } catch (error) {
-        console.error('Error:', error);
+        console.error('Error during page load:', error);
         alert('An error occurred while fetching data.');
     }
+
+    logDateInput.addEventListener('change', async (event) => {
+        selectedDate = new Date(event.target.value).toISOString().split('T')[0];
+        workoutStatuses = await fetchWorkoutStatuses(username, selectedDate);
+    
+        if (!workoutStatuses || workoutStatuses.length === 0) {
+            // No workout statuses found for the selected date
+            alert('No workout statuses found for the selected date.');
+    
+            // Reset checkboxes to their default state (unticked)
+            resetCheckboxes(workoutStatuses); // Reset checkboxes without updating statuses
+            return;
+        }
+    
+        // If workout statuses are found, update the checkboxes
+        updateCheckboxes(workoutStatuses); // Update checkboxes with new workout statuses
+    });
+    
 });
 
-// Function to fetch workouts for the user
-async function fetchWorkouts(username) {
-    try {
-        const response = await fetch(`/get-workouts/${username}`);
-        if (!response.ok) {
-            alert('Error fetching workouts.');
-            return null;
-        }
-        return await response.json(); // Return the array of workouts
-    } catch (error) {
-        console.error('Error fetching workouts:', error);
-        alert('An error occurred while fetching workouts.');
-        return null;
-    }
+function resetCheckboxes() {
+    // Select all checkboxes that represent workouts
+    const checkboxes = document.querySelectorAll('[id^="workout-"]'); // Select all checkboxes with workout- prefix
+    
+    // Reset each checkbox to unticked state
+    checkboxes.forEach(checkbox => {
+        checkbox.checked = false; // Untick the checkbox
+    });
 }
 
-// Function to fetch workout statuses for a specific user and date
-async function fetchWorkoutStatuses(username, date) {
-    if (!date) {
-        alert('Please select a date.');
-        return;
-    }
 
-    console.log('Selected Date:', date); // Log the date to check its format
-
-    try {
-        const statusResponse = await fetch(`/get-workout-statuses?username=${username}&date=${date}`);
-        if (!statusResponse.ok) {
-            alert('Error fetching workout statuses.');
-            return null;
-        }
-        return await statusResponse.json(); // Return the array of statuses
-    } catch (error) {
-        console.error('Error fetching workout statuses:', error);
-        alert('An error occurred while fetching workout statuses.');
-        return null;
-    }
-}
 
 
 // Function to create a workout item with checkbox and details button
@@ -638,17 +688,13 @@ function createWorkoutItem(workout, workoutStatuses) {
 
     const checkbox = document.createElement('input');
     checkbox.type = 'checkbox';
-    checkbox.value = workout._id; // Use workout ID for identification
-    checkbox.style.marginRight = '10px'; // Space between checkbox and label
+    checkbox.id = `workout-${workout._id.toString()}`;
+    checkbox.value = workout._id.toString();  // Also convert value to string
 
-    // Find the corresponding workout status
-    const workoutStatus = workoutStatuses.find(status => status.workoutId === workout._id);
-    
-    // Set the checkbox state based on the workout's status from WorkoutStatus
-    checkbox.checked = workoutStatus && workoutStatus.status === 'Yes';
+
 
     const label = document.createElement('label');
-    label.textContent = workout.name;  // Set workout name as label text
+    label.textContent = workout.name;
     label.style.marginLeft = '10px';
 
     const detailsButton = document.createElement('button');
@@ -656,7 +702,7 @@ function createWorkoutItem(workout, workoutStatuses) {
     detailsButton.style.marginLeft = '10px';
 
     detailsButton.addEventListener('click', () => {
-        openWorkoutModal(workout); // Open modal and pass the workout plan
+        openWorkoutModal(workout); // Open modal with the workout details
     });
 
     workoutItem.appendChild(checkbox);
@@ -789,9 +835,82 @@ document.getElementById("deleteButton").addEventListener("click", async function
                     alert('An error occurred while deleting the workout plan.');
                 }
             }
-        });
+});
 
 
+// Function to fetch workouts for the user
+async function fetchWorkouts(username) {
+    if (!username) {
+        console.error('Username is required to fetch workouts.');
+        return null;
+    }
+
+    try {
+        const response = await fetch(`/get-workouts/${username}`);
+        if (!response.ok) {
+            throw new Error(`Error fetching workouts. Status: ${response.status}`);
+        }
+        return await response.json(); // Return the array of workouts
+    } catch (error) {
+        console.error('Error fetching workouts:', error);
+        alert('An error occurred while fetching workouts.');
+        return null;
+    }
+}
+
+// Function to fetch workout statuses for a specific date
+async function fetchWorkoutStatuses(username, date) {
+    if (!username || !date) {
+        console.error('Username and date are required to fetch workout statuses.');
+        return null;
+    }
+
+    console.log(`Fetching workout statuses for username: ${username}, date: ${date}`);
+
+    try {
+        const response = await fetch(`/get-workout-statuses?username=${username}&date=${date}`);
+        if (!response.ok) {
+            throw new Error(`Error fetching workout statuses. Status: ${response.status}`);
+        }
+        return await response.json();
+    } catch (error) {
+        console.error('Error fetching workout statuses:', error);
+        alert('An error occurred while fetching workout statuses.');
+        return null;
+    }
+}
+
+function updateCheckboxes(workoutStatuses) {
+    workoutStatuses.forEach(status => {
+        const workoutId = status.workoutId._id.toString(); // Access the _id field of workoutId object
+        const checkbox = document.getElementById(`workout-${workoutId}`); // Use the correct workoutId as a string
+        
+        console.log(`Attempting to find checkbox with ID: workout-${workoutId}`); // Log the ID being searched
+
+        if (checkbox) {
+            checkbox.checked = status.status === 'Yes';  // Update checkbox state based on status
+            console.log(`Checkbox found and updated: workout-${workoutId} | Status: ${status.status}`); // Log success
+        } else {
+            console.log(`Checkbox with ID workout-${workoutId} not found`);  // Log if checkbox is not found
+        }
+    });
+}
+
+
+// Add an event listener to handle the log button click
+document.getElementById('Logcheck').addEventListener('click', async function(event) {
+    event.preventDefault(); // Prevent default behavior (e.g., form submission)
+
+    const username = sessionStorage.getItem('username');
+    const logDateInput = document.getElementById('logDate');
+    const selectedDate = new Date(logDateInput.value).toISOString().split('T')[0]; // Get the selected date in ISO format
+
+    // Fetch the workout checklist container
+    const workoutChecklistContainer = document.getElementById('workoutChecklist');
+
+    // Call the save function to store the workout statuses
+    await saveWorkoutStatuses(workoutChecklistContainer, username, selectedDate);
+});
 
 </script>
 

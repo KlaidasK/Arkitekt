@@ -782,7 +782,6 @@ const workoutSchema = new mongoose.Schema({
   duration: { type: Number, required: true, min: 0 }, // Duration in minutes (required, must be >= 0)
   intensity: { type: String, enum: ['Low', 'Medium', 'High'], required: true }, // Workout intensity (required)
   date: { type: Date, default: Date.now }, // Log date (default to current date)
-  status:{ type: String, enum: ['No', 'Yes'] }, // Workout intensity (required)
 });
 
 workoutSchema.index({ username: 1, name: 1 }, { unique: true });
@@ -1071,15 +1070,23 @@ app.get('/get-workout-statuses', async (req, res) => {
   }
 
   try {
-    // Convert the date to a proper date format (we assume the date is in ISO format)
+    // Validate and parse the date
     const startDate = new Date(date);
+    if (isNaN(startDate.getTime())) {
+      return res.status(400).json({ error: 'Invalid date format. Please use YYYY-MM-DD.' });
+    }
+
+    // Set endDate to the next day to include the entire day
     const endDate = new Date(startDate);
-    endDate.setDate(startDate.getDate() + 1); // Set endDate to the next day to match the full day
+    endDate.setDate(startDate.getDate() + 1);
+
+    // Log query parameters for debugging
+    console.log(`Fetching workout statuses for username: ${username}, date range: ${startDate} - ${endDate}`);
 
     // Query the database for statuses that match the user and the date range
     const statuses = await WorkoutStatus.find({
       username,
-      date: { $gte: startDate, $lt: endDate } // Filter by the given date
+      date: { $gte: startDate, $lt: endDate }, // Ensure date is within the range
     }).populate('workoutId'); // Populate the workout details
 
     res.status(200).json(statuses);
@@ -1088,6 +1095,7 @@ app.get('/get-workout-statuses', async (req, res) => {
     res.status(500).json({ error: 'Error fetching workout statuses', details: error.message });
   }
 });
+
 
 
 
