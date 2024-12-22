@@ -291,6 +291,39 @@ const DailyLog = mongoose.model('DailyLog', dailyLogSchema);
 module.exports = DailyLog;
 
 
+// Endpoint to get step progress
+app.get("/get-step-progress", async (req, res) => {
+  const { username } = req.query;
+
+  if (!username) {
+    return res.status(400).json({ error: "Username is required." });
+  }
+
+  try {
+    // Get the earliest and latest step logs
+    const earliestLog = await DailyLog.findOne({ username }).sort({ date: 1 });
+    const latestLog = await DailyLog.findOne({ username }).sort({ date: -1 });
+
+    if (!earliestLog || !latestLog) {
+      return res
+        .status(404)
+        .json({ error: "No step data found for the user." });
+    }
+
+    const stepProgress = latestLog.steps - earliestLog.steps;
+
+    res.json({
+      success: true,
+      initialSteps: earliestLog.steps,
+      latestSteps: latestLog.steps,
+      progress: stepProgress,
+    });
+  } catch (error) {
+    console.error("Error fetching step progress:", error);
+    res.status(500).json({ error: "Server error while fetching step progress." });
+  }
+});
+
 
 app.post('/log-activity', async (req, res) => {
   const { username, logDate, steps, workout, workoutDuration, sleep } = req.body;
@@ -462,6 +495,231 @@ const nutrientGoalsSchema = new mongoose.Schema({
 const NutrientGoals = mongoose.model('NutrientGoals', nutrientGoalsSchema);
 
 module.exports = { NutrientLog, NutrientGoals };
+
+app.get('/get-calorie-goal', async (req, res) => {
+  const { username } = req.query;
+
+  if (!username) {
+    return res.status(400).json({ success: false, error: 'Username is required' });
+  }
+
+  try {
+    // Find the nutrient goals for the user
+    const nutrientGoals = await NutrientGoals.findOne({ username: username });
+
+    if (!nutrientGoals) {
+      return res.status(404).json({ success: false, error: 'Nutrient goals not found for this user' });
+    }
+
+    // Return the calorie goal for the user
+    return res.json({
+      success: true,
+      calorieGoal: nutrientGoals.caloriesGoal,
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ success: false, error: 'Error fetching calorie goal' });
+  }
+});
+
+app.get('/get-weekly-calories', async (req, res) => {
+  const { username } = req.query;
+
+  if (!username) {
+    return res.status(400).json({ success: false, error: 'Username is required' });
+  }
+
+  try {
+    // Get the date for one week ago
+    const oneWeekAgo = new Date();
+    oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+
+    // Fetch the nutrient logs for the past week for the given user
+    const logs = await NutrientLog.find({
+      username: username,
+      date: { $gte: oneWeekAgo },  // Filter logs from the last 7 days
+    }).sort({ date: 1 });  // Sort by date ascending
+
+    // Map logs to return only the date and calories
+    const totalCalories = logs.map(log => ({
+      date: log.date,
+      calories: log.calories
+    }));
+
+    // Return the result as a response
+    return res.json({
+      success: true,
+      logs: totalCalories,
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ success: false, error: 'Error fetching weekly calories' });
+  }
+});
+
+app.get('/get-monthly-calories', async (req, res) => {
+  const { username } = req.query;
+
+  if (!username) {
+    return res.status(400).json({ success: false, error: 'Username is required' });
+  }
+
+  try {
+    // Get the date for one month ago
+    const oneMonthAgo = new Date();
+    oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1);  // Subtract one month from the current date
+
+    // Fetch the nutrient logs for the past month for the given user
+    const logs = await NutrientLog.find({
+      username: username,
+      date: { $gte: oneMonthAgo },  // Filter logs from the last 30 days
+    }).sort({ date: 1 });  // Sort by date ascending
+
+    // Map logs to return only the date and calories
+    const totalCalories = logs.map(log => ({
+      date: log.date,
+      calories: log.calories
+    }));
+
+    // Return the result as a response
+    return res.json({
+      success: true,
+      logs: totalCalories,
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ success: false, error: 'Error fetching monthly calories' });
+  }
+});
+
+app.get('/get-weekly-nutrients', async (req, res) => {
+  const { username } = req.query;
+
+  if (!username) {
+    return res.status(400).json({ success: false, error: 'Username is required' });
+  }
+
+  try {
+    const oneWeekAgo = new Date();
+    oneWeekAgo.setDate(oneWeekAgo.getDate() - 7); // Get date for one week ago
+
+    // Fetch the nutrient logs for the past week
+    const logs = await NutrientLog.find({
+      username: username,
+      date: { $gte: oneWeekAgo },
+    }).sort({ date: 1 });
+
+    // Calculate the weekly averages for protein, carbs, and fats
+    let totalProtein = 0, totalCarbs = 0, totalFat = 0;
+    logs.forEach(log => {
+      totalProtein += log.protein;
+      totalCarbs += log.carbohydrates;
+      totalFat += log.fats;
+    });
+
+    const averageProtein = totalProtein / logs.length;
+    const averageCarbs = totalCarbs / logs.length;
+    const averageFat = totalFat / logs.length;
+
+    return res.json({
+      success: true,
+      averages: {
+        protein: averageProtein,
+        carbs: averageCarbs,
+        fat: averageFat,
+      },
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ success: false, error: 'Error fetching weekly nutrients' });
+  }
+});
+
+app.get('/get-monthly-nutrients', async (req, res) => {
+  const { username } = req.query;
+
+  if (!username) {
+    return res.status(400).json({ success: false, error: 'Username is required' });
+  }
+
+  try {
+    const oneMonthAgo = new Date();
+    oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1);  // Get date for one month ago
+
+    // Fetch the nutrient logs for the past month
+    const logs = await NutrientLog.find({
+      username: username,
+      date: { $gte: oneMonthAgo },
+    }).sort({ date: 1 });
+
+    // Calculate the monthly averages for protein, carbs, and fats
+    let totalProtein = 0, totalCarbs = 0, totalFat = 0;
+    logs.forEach(log => {
+      totalProtein += log.protein;
+      totalCarbs += log.carbohydrates;
+      totalFat += log.fats;
+    });
+
+    const averageProtein = totalProtein / logs.length;
+    const averageCarbs = totalCarbs / logs.length;
+    const averageFat = totalFat / logs.length;
+
+    return res.json({
+      success: true,
+      averages: {
+        protein: averageProtein,
+        carbs: averageCarbs,
+        fat: averageFat,
+      },
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ success: false, error: 'Error fetching monthly nutrients' });
+  }
+});
+
+
+// Example API route to get calorie progress data
+app.get('/get-calories-intake', async (req, res) => {
+  const username = req.query.username;
+
+  try {
+    // Fetch all nutrient logs for the user, sorted by date ascending (earliest first)
+    const nutrientLogs = await NutrientLog.find({ username: username }).sort({ date: 1 });
+
+    if (!nutrientLogs || nutrientLogs.length === 0) {
+      return res.json({ success: false, message: 'No calorie intake data found for this user.' });
+    }
+
+    // Get the initial (earliest) and latest calorie intake
+    const initialCalories = nutrientLogs[0].calories; // First log (earliest)
+    const latestCalories = nutrientLogs[nutrientLogs.length - 1].calories; // Last log (latest)
+
+    // Calculate progress (latest - initial)
+    const progress = latestCalories - initialCalories;
+
+    // Fetch the user's nutrient goal data (to compare with actual intake)
+    const nutrientGoalData = await NutrientGoals.findOne({ username: username });
+
+    if (!nutrientGoalData) {
+      return res.json({ success: false, message: 'No nutrient goals found for this user.' });
+    }
+
+    // Send the response with initial and latest calorie intake, progress, and the goal
+    res.json({
+      success: true,
+      calorieGoal: nutrientGoalData.caloriesGoal,
+      initialCalories: initialCalories,
+      latestCalories: latestCalories,
+      progress: progress,
+    });
+
+  } catch (error) {
+    console.error(error);
+    res.json({ success: false, error: error.message });
+  }
+});
+
 
 
 
@@ -635,7 +893,7 @@ app.get('/get-nutrient-goals', async (req, res) => {
 const weightSchema = new mongoose.Schema({
   username: { type: String, required: true }, // Link to the user
   date: { type: Date, required: true, default: Date.now }, // Log date
-  weight: { type: Number, required: true, min: 0 }, // User's logged weight
+  weight: { type: Number, required: true, min: 30, max: 300 }, // User's logged weight
 });
 
 const weightLog = mongoose.model('weightLog', weightSchema);
@@ -701,6 +959,19 @@ app.post('/log-weight', async (req, res) => {
 
 
 
+// Get the latest weight for the user
+app.get("/get-latest-weight", async (req, res) => {
+  try {
+      const username = req.query.username;
+      const latestWeight = await weightLog.findOne({ username }).sort({ date: -1 });
+      if (!latestWeight) return res.status(404).json({ error: "No weight data found" });
+
+      res.json(latestWeight);
+  } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: "Server error" });
+  }
+});
 
 app.get('/get-weight-log', async (req, res) => {
   const { username, date } = req.query;
@@ -927,8 +1198,7 @@ app.put('/update-workout', async (req, res) => {
 
 // Delete workout
 app.delete('/delete-workout', async (req, res) => {
-  const { id } = req.body;  // Expecting the workout's id in the request body
-  console.log('Delete workout route triggered');  // Check if this logs
+  const { id } = req.body; // Expecting the workout's id in the request body
 
   // Log incoming data for debugging
   console.log('Delete workout request received:', { id });
@@ -949,16 +1219,21 @@ app.delete('/delete-workout', async (req, res) => {
       return res.status(404).json({ error: 'Workout not found.' });
     }
 
-    // Log successful deletion
-    console.log('Workout deleted successfully:', deletedWorkout);
+    // Delete all workout statuses associated with the workout
+    const deletedStatuses = await WorkoutStatus.deleteMany({ workoutId: id });
+    console.log('Associated workout statuses deleted:', deletedStatuses);
 
-    res.status(200).json({ success: true, message: 'Workout deleted successfully.' });
+    res.status(200).json({ 
+      success: true, 
+      message: 'Workout and associated statuses deleted successfully.' 
+    });
   } catch (error) {
     // Log any errors for debugging
-    console.error('Error deleting workout:', error);
+    console.error('Error deleting workout or associated statuses:', error);
     res.status(500).json({ error: 'Server error while deleting the workout.' });
   }
 });
+
 
 const workoutStatusSchema = new mongoose.Schema({
   username: { 
@@ -1096,6 +1371,120 @@ app.get('/get-workout-statuses', async (req, res) => {
   }
 });
 
+app.get('/get-workout-progress', async (req, res) => {
+  const { username } = req.query;
+
+  if (!username) {
+    return res.status(400).json({ success: false, error: 'Username is required' });
+  }
+
+  try {
+    // Fetch all completed workouts for the user
+    const completedWorkouts = await WorkoutStatus.find({
+      username: username,
+      status: 'Yes',
+    }).sort({ date: 1 }); // Sort by date in ascending order
+
+    if (!completedWorkouts.length) {
+      return res.json({ success: true, averageWorkoutsPerWeek: 0, totalCompletedWorkouts: 0 });
+    }
+
+    // Group workouts by week
+    const weeklyWorkouts = {};
+    const startOfWeek = (date) => {
+      const d = new Date(date);
+      d.setDate(d.getDate() - d.getDay()); // Set to the start of the week (Sunday)
+      d.setHours(0, 0, 0, 0); // Clear time
+      return d.toISOString();
+    };
+
+    for (const workout of completedWorkouts) {
+      const week = startOfWeek(workout.date);
+      if (!weeklyWorkouts[week]) {
+        weeklyWorkouts[week] = 0;
+      }
+      weeklyWorkouts[week]++;
+    }
+
+    // Calculate the average workouts per week
+    const totalWeeks = Object.keys(weeklyWorkouts).length;
+    const totalCompletedWorkouts = completedWorkouts.length;
+    const averageWorkoutsPerWeek = (totalCompletedWorkouts / totalWeeks).toFixed(2);
+
+    return res.json({
+      success: true,
+      averageWorkoutsPerWeek: averageWorkoutsPerWeek,
+      totalCompletedWorkouts: totalCompletedWorkouts,
+      weeklyData: weeklyWorkouts,
+    });
+  } catch (error) {
+    console.error('Error fetching average workouts per week:', error);
+    return res.status(500).json({ success: false, error: 'Error fetching average workouts per week' });
+  }
+});
 
 
+
+
+
+app.get('/get-workout-completions', async (req, res) => {
+  const { username, period } = req.query;
+
+  if (!username || !period) {
+    return res.status(400).json({ success: false, error: 'Username and period are required' });
+  }
+
+  try {
+    let dateRange;
+
+    // Determine the date range based on the period (weekly or monthly)
+    if (period === 'weekly') {
+      const oneWeekAgo = new Date();
+      oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+      dateRange = { $gte: oneWeekAgo };
+    } else if (period === 'monthly') {
+      const oneMonthAgo = new Date();
+      oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1);
+      dateRange = { $gte: oneMonthAgo };
+    } else {
+      return res.status(400).json({ success: false, error: 'Invalid period' });
+    }
+
+    // Fetch the workout status data with `status: 'Yes'` and populate the workout details
+    const workoutStatuses = await WorkoutStatus.find({
+      username: username,
+      date: dateRange,
+      status: 'Yes', // Include only workouts marked as completed (status = "Yes")
+    })
+      .populate('workoutId', 'name') // Populate workout name
+      .exec();
+
+    if (!workoutStatuses || workoutStatuses.length === 0) {
+      return res.status(404).json({ success: false, error: 'No workout data found for the specified period' });
+    }
+
+    // Count the completions of each workout
+    const workoutCounts = workoutStatuses.reduce((counts, workoutStatus) => {
+      const workoutName = workoutStatus.workoutId.name; // Access the populated workout name
+      if (!counts[workoutName]) {
+        counts[workoutName] = 0;
+      }
+      counts[workoutName]++;
+      return counts;
+    }, {});
+
+    // Prepare the data for the chart
+    const labels = Object.keys(workoutCounts);
+    const data = Object.values(workoutCounts);
+
+    return res.json({
+      success: true,
+      labels: labels,
+      data: data,
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ success: false, error: 'Error fetching workout completion data' });
+  }
+});
 

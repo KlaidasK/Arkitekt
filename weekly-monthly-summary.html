@@ -1,0 +1,807 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <!-- Font Awesome (for icons) -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+
+
+
+
+    <title>Weight-tracking</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+ 
+        
+        /* Style for logged days */
+        .logged-day {
+            background-color: #4CAF50 !important; /* Green background for logged days */
+            color: white; /* Text color for better visibility */
+            font-weight: bold; /* Make it bold */
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 0;
+            background: url('assets/pic5.jpg') no-repeat center center fixed; /* Add the image */
+            background-size: cover; /* Ensure the image covers the entire background */
+        }
+        
+          /* Navbar Style */
+          .w3-bar {
+            font-family: Arial, sans-serif;
+            background-color: #ffffff;
+            padding: 30px 30px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between; /* Distribute the items between the left and right */
+            align-items: center;
+        }
+
+        .w3-bar-item {
+            padding: 30px 30px;
+            color: #333;
+            font-size: 17px; /* Uniform font size for all items */
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+        .w3-bar-item:hover {
+            background-color: #f4f4f9;
+            color: #007bff;
+        }
+
+        /* Right side: Profile icon and other links */
+        .w3-right {
+            font-size: 17px; /* Ensures the font size is consistent with other links */
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            margin-left: auto;
+        }
+        
+        .container {
+            width: 90%;
+            max-width: 1400px;
+            margin: 80px auto 20px; /* Adjusted margin-top to 80px to account for the navbar height */
+            background: white;
+            padding: 20px;
+            box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+        }
+        
+        h1 {
+            text-align: center;
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+        
+        form label {
+            display: block;
+            margin: 10px 0 5px;
+        }
+        
+        form input, form select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        
+        form button {
+            width: 100%;
+            padding: 10px;
+            background-color: #28a745; /* Green background */
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+          
+        }
+        
+        form button:hover {
+            background-color: #218838; /* Darker green on hover */
+        }
+        
+        .progress-section {
+            margin-top: 20px;
+        }
+        
+        .progress-section h2 {
+            font-size: 20px;
+            margin-bottom: 15px;
+        }
+        
+        .activity-summary {
+            padding: 10px;
+            background-color: #e9f7ef;
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+        
+        .activity-summary h3 {
+            font-size: 18px;
+        }
+        
+        @media (max-width: 600px) {
+            .container {
+                width: 95%;
+                padding: 15px;
+            }
+        
+            h1 {
+                font-size: 20px;
+            }
+        
+            form input, form select {
+                padding: 8px;
+                font-size: 14px;
+            }
+        
+            form button {
+                font-size: 14px;
+            }
+        }
+        
+        /* account menu --> */
+        
+    /* Remove hover effect for dropdown */
+        .account-dropdown:hover .dropdown-menu {
+            display: block; /* No longer need this */
+        }
+
+        /* Ensure dropdown menu is hidden by default */
+        .dropdown-menu {
+            display: none;
+            position: absolute;
+            top: 100%;
+            right: 0;
+            z-index: 1000;
+            background-color: #ffffff;
+            box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+            min-width: 200px;
+            padding: 10px 0;
+        }
+
+        
+        /* Show dropdown on hover */
+        .account-dropdown:hover .dropdown-menu {
+            display: block; /* Show the menu */
+        }
+        
+        /* Dropdown item styles */
+        .dropdown-item {
+            display: flex;
+            align-items: center; /* Align text and icons */
+            padding: 12px 20px; /* Increase padding */
+            text-decoration: none;
+            color: #333;
+            font-size: 16px; /* Slightly larger font */
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .dropdown-item:last-child {
+            border-bottom: none; /* Remove border for the last item */
+        }
+        
+        /* Dropdown icon styles */
+        .dropdown-item i {
+            margin-right: 10px; /* Add space between icon and text */
+            color: #28a745; /* Icon color */
+            font-size: 18px; /* Icon size */
+        }
+        
+        /* Hover effect */
+        .dropdown-item:hover {
+            background-color: #f4f4f9; /* Light gray background */
+            color: #007bff; /* Highlight text */
+        }
+
+        .modal {
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+    
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 50%;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+            border-radius: 5px;
+        }
+    
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+    
+        .close:hover,
+        .close:focus {
+            color: #000;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .button-container{
+            display: flex;
+            gap: 10px;  /* Adds a 10px space between the buttons */
+            margin-top: 15px;
+        }
+
+
+        
+        #graphChart {
+            display: none; /* Hide by default, will be shown in weekly view */
+        }
+        #graphChart {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        #graphChart > div {
+            width: 45%;
+            height: 400px; /* Adjust the height as needed */
+        }
+        
+        canvas {
+            width: 100%;
+            height: 100%;
+        }
+        
+
+
+    </style>
+</head>
+<body>
+
+<!-- Navbar -->
+<div class="w3-top">
+    <div class="w3-bar w3-white w3-padding w3-card top-bar">
+        <!-- Health Tracker link on the left side -->
+        <a href="#home" class="w3-bar-item w3-button">Health Tracker</a>
+        
+        <!-- Links aligned to the right (except Health Tracker) -->
+        <div class="w3-right">
+            <a href="activity.html" class="w3-bar-item w3-button">Daily Activities</a>
+            <a href="nutrition.html" class="w3-bar-item w3-button">Nutrition</a>
+            <a href="weight-tracking.html" class="w3-bar-item w3-button">Weight Tracking</a>
+            <a href="workout-tracking.html" class="w3-bar-item w3-button">Workout Tracking</a>
+            <a href="goals.html" class="w3-bar-item w3-button">Goals</a>
+            <a href="weekly-monthly-summary.html" class="w3-bar-item w3-button">Weekly/Monthly Summary</a>
+            <a href="progress-dashboard.html" class="w3-bar-item w3-button">Progress Dashboard</a>
+            <a href="notifications.html" class="w3-bar-item w3-button">Notifications</a>
+
+            <!-- Account dropdown for profile icon -->
+            <div class="account-dropdown">
+                <button class="w3-bar-item w3-button" id="accountIcon" aria-label="Profile">
+                    <i class="fas fa-user"></i>
+                </button>
+                <div id="accountMenu" class="dropdown-menu">
+                    <a href="account.html" class="dropdown-item">
+                        <i class="fas fa-cog"></i> Account Settings
+                    </a>
+                    <a href="index.html" class="dropdown-item" id="logoutButton">
+                        <i class="fas fa-sign-out-alt"></i> Sign Out
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <h1>Progress summary</h1>
+
+    <!-- Weight Logging Form -->
+    <form id="weightForm">
+        <!-- Button Container for Daily, Weekly, Monthly -->
+        <div class="button-container">
+            <button type="button" id="weeklyBtn">Weekly</button>
+            <button type="button" id="monthlyBtn">Monthly</button>
+        </div>
+
+   
+        <div id="graphChart" style="display: flex; justify-content: space-between; gap: 10px;">
+            <div style="width: 45%; height: 400px;">
+                <canvas id="weightChart"></canvas>
+            </div>
+            <div style="width: 45%; height: 400px;">
+                <canvas id="calorieChart"></canvas>
+            </div>
+        </div>
+        
+        <!-- Nutrients Pie Charts -->
+    
+        <div id="chartsContainer" style="display: flex; justify-content: space-between; gap: 10px; width: 100%;">
+
+            <!-- Nutrient Pie Charts (Weekly & Monthly side by side within the same container) -->
+            <div style="width: 30%; display: flex; gap: 10px; flex-direction: column;">
+        
+                <!-- Weekly Pie Chart -->
+                <div style="flex: 1; display: flex; justify-content: center; align-items: center;">
+                    <canvas id="weeklyNutrientChart" width="500" height="400"></canvas>
+                </div>
+        
+                <!-- Monthly Pie Chart -->
+                <div style="flex: 1; display: flex; justify-content: center; align-items: center;">
+                    <canvas id="monthlyNutrientChart" width="500" height="400"></canvas>
+                </div>
+        
+            </div>
+        
+            <!-- Workout Graph -->
+            <div style="width: 50%; height: 400px;">
+                <canvas id="workoutChart" width="600" height="400"></canvas>
+            </div>
+        
+        </div>
+        
+    </form>
+</div>
+    <script>
+        let weightChartInstance;  // Instance for weight chart
+        let calorieChartInstance; // Instance for calorie chart
+
+        window.addEventListener('load', function () {
+            // Simulate click on the "Weekly" button to make it the default view
+            document.getElementById("weeklyBtn").click();})
+        
+        document.getElementById('accountIcon').addEventListener('click', function (event) {
+            var menu = document.getElementById('accountMenu');
+            event.stopPropagation();
+            
+            if (menu.style.display === "block") {
+                menu.style.display = "none";
+            } else {
+                menu.style.display = "block";
+            }
+        });
+        
+        window.addEventListener('click', function (event) {
+            var dropdown = document.getElementById('accountMenu');
+            var button = document.getElementById('accountIcon');
+            if (!button.contains(event.target) && !dropdown.contains(event.target)) {
+                dropdown.style.display = "none";
+            }
+        });
+        
+        document.getElementById("weeklyBtn").addEventListener("click", function () {
+            document.getElementById("weightChart").style.display = "block";  // Show weight chart
+            document.getElementById("calorieChart").style.display = "block"; // Show calorie chart
+            document.getElementById("weeklyNutrientChart").style.display = "block"; // Show weekly chart
+            document.getElementById("monthlyNutrientChart").style.display = "none"; // Hide monthly chart
+            const username = sessionStorage.getItem("username");
+            fetchWeeklyData(username);
+            fetchWeeklyNutrients(username); // Fetch nutrients (protein, carbs, fat)
+            renderWorkoutGraph(username, 'weekly'); // Render the weekly workout chart
+        });
+        
+        document.getElementById("monthlyBtn").addEventListener("click", function () {
+            document.getElementById("weightChart").style.display = "block";  // Show weight chart
+            document.getElementById("calorieChart").style.display = "block"; // Show calorie chart
+            document.getElementById("monthlyNutrientChart").style.display = "block"; // Show monthly chart
+            document.getElementById("weeklyNutrientChart").style.display = "none"; // Hide weekly chart
+            const username = sessionStorage.getItem("username");
+            fetchMonthlyData(username);
+            fetchMonthlyNutrients(username); // Fetch nutrients (protein, carbs, fat)
+            renderWorkoutGraph(username, 'monthly'); // Render the monthly workout chart
+        });
+        
+        
+        async function fetchWeeklyData(username) {
+            const weightResponse = await fetch(`/get-weekly-weight?username=${username}`);
+            const weightData = await weightResponse.json();
+        
+            const caloriesResponse = await fetch(`/get-weekly-calories?username=${username}`);
+            const caloriesData = await caloriesResponse.json();
+        
+            if (weightData.success && caloriesData.success) {
+                renderGraph(weightData.logs, caloriesData.logs, username);
+            } else {
+                console.error("Error fetching data");
+            }
+        }
+        
+        async function fetchMonthlyData(username) {
+            const weightResponse = await fetch(`/get-monthly-weight?username=${username}`);
+            const weightData = await weightResponse.json();
+        
+            const caloriesResponse = await fetch(`/get-monthly-calories?username=${username}`);
+            const caloriesData = await caloriesResponse.json();
+        
+            if (weightData.success && caloriesData.success) {
+                renderGraph(weightData.logs, caloriesData.logs, username);
+            } else {
+                console.error("Error fetching data");
+            }
+        }
+        
+        async function renderGraph(weightLogs, calorieLogs, username) {
+            const weightGoal = await fetchWeightGoal(username);
+            const calorieGoal = await fetchCalorieGoal(username);
+        
+            // Destroy previous charts if they exist
+            if (weightChartInstance) {
+                weightChartInstance.destroy();
+            }
+            if (calorieChartInstance) {
+                calorieChartInstance.destroy();
+            }
+        
+            const today = new Date();
+            const labels = [];
+            const weights = [];
+            const calories = [];
+        
+            const days = (weightLogs.length > 7) ? 30 : 7;
+            for (let i = days - 1; i >= 0; i--) {
+                const date = new Date(today);
+                date.setDate(today.getDate() - i);
+                labels.push(date.toLocaleDateString());
+                weights.push(null);
+                calories.push(null);
+            }
+        
+            weightLogs.forEach(log => {
+                const logDate = new Date(log.date).toLocaleDateString();
+                const index = labels.indexOf(logDate);
+                if (index !== -1) {
+                    weights[index] = log.weight;
+                }
+            });
+        
+            calorieLogs.forEach(log => {
+                const logDate = new Date(log.date).toLocaleDateString();
+                const index = labels.indexOf(logDate);
+                if (index !== -1) {
+                    calories[index] = log.calories;
+                }
+            });
+        
+            // Calculate min and max for weight
+            const minWeight = Math.min(...weights.filter(weight => weight !== null));
+            const maxWeight = Math.max(...weights.filter(weight => weight !== null));
+            
+            // Calculate min and max for calories
+            const minCalories = Math.min(...calories.filter(cal => cal !== null));
+            const maxCalories = Math.max(...calories.filter(cal => cal !== null));
+        
+            // Set min and max for weight chart
+            const weightYMin = Math.max(0, minWeight - 10);
+            const weightYMax = Math.max(maxWeight + 10, weightGoal + 10);
+        
+            // Set min and max for calorie chart
+            const calorieYMin = Math.max(0, minCalories - 50);
+            const calorieYMax = Math.max(maxCalories + 50, calorieGoal + 50);
+        
+        // Create the weight chart
+const weightCtx = document.getElementById('weightChart').getContext('2d');
+weightChartInstance = new Chart(weightCtx, {
+    type: 'line',
+    data: {
+        labels: labels,
+        datasets: [
+            {
+                label: 'Weight Over Last Week/Month',
+                data: weights,
+                borderColor: 'green',
+                backgroundColor: 'green',
+                fill: false,
+                pointRadius: 5,
+                pointBackgroundColor: 'green',
+                borderWidth: 2,
+            },
+            {
+                label: 'Weight Goal',
+                data: Array(days).fill(weightGoal),
+                borderColor: 'red',
+                borderWidth: 2,
+                borderDash: [],
+                fill: false,
+                pointRadius: 0,
+                tension: 0,
+            }
+        ]
+    },
+    options: {
+        responsive: true,
+        plugins: {
+            title: {
+                display: true,
+                text: 'Weight Over Time', // Title for the weight chart
+                font: {
+                    size: 16,
+                }
+            }
+        },
+        scales: {
+            y: {
+                min: weightYMin,
+                max: weightYMax,
+                beginAtZero: false
+            }
+        }
+    }
+});
+
+// Create the calorie chart
+const calorieCtx = document.getElementById('calorieChart').getContext('2d');
+calorieChartInstance = new Chart(calorieCtx, {
+    type: 'line',
+    data: {
+        labels: labels,
+        datasets: [
+            {
+                label: 'Calories Over Last Week/Month',
+                data: calories,
+                borderColor: 'blue',
+                backgroundColor: 'blue',
+                fill: false,
+                pointRadius: 5,
+                pointBackgroundColor: 'blue',
+                borderWidth: 2,
+            },
+            {
+                label: 'Calorie Goal',
+                data: Array(days).fill(calorieGoal),
+                borderColor: 'orange',
+                borderWidth: 2,
+                borderDash: [],
+                fill: false,
+                pointRadius: 0,
+                tension: 0,
+            }
+        ]
+    },
+    options: {
+        responsive: true,
+        plugins: {
+            title: {
+                display: true,
+                text: 'Calories Over Time', // Title for the calorie chart
+                font: {
+                    size: 16,
+                }
+            }
+        },
+        scales: {
+            y: {
+                min: calorieYMin,
+                max: calorieYMax,
+                beginAtZero: false
+            }
+        }
+    }
+})};
+
+        
+        
+        async function fetchWeightGoal(username) {
+            try {
+                const response = await fetch(`/get-nutrient-goals?username=${encodeURIComponent(username)}`);
+                const data = await response.json();
+                return data.goals?.weightGoal || 60;
+            } catch (error) {
+                console.error('Error fetching weight goal:', error);
+                return 60;
+            }
+        }
+        
+        async function fetchCalorieGoal(username) {
+            const response = await fetch(`/get-calorie-goal?username=${username}`);
+            const data = await response.json();
+            return data.goal || 2000;
+        }
+        
+        // Fetch weekly nutrients data
+async function fetchWeeklyNutrients(username) {
+    const response = await fetch(`/get-weekly-nutrients?username=${username}`);
+    const data = await response.json();
+
+    if (data.success) {
+        renderNutrientPieChart(data.averages, 'weekly');
+    } else {
+        console.error("Error fetching weekly nutrients");
+    }
+}
+
+// Fetch monthly nutrients data
+async function fetchMonthlyNutrients(username) {
+    const response = await fetch(`/get-monthly-nutrients?username=${username}`);
+    const data = await response.json();
+
+    if (data.success) {
+        renderNutrientPieChart(data.averages, 'monthly');
+    } else {
+        console.error("Error fetching monthly nutrients");
+    }
+}
+
+let weeklyNutrientChartInstance = null;
+let monthlyNutrientChartInstance = null;
+
+
+// Function to render the nutrient pie chart for weekly or monthly data
+function renderNutrientPieChart(averages, period) {
+    const pieChartContainer = document.getElementById(`${period}NutrientChartContainer`);
+
+    // Destroy previous pie chart instance if it exists
+    if (period === 'weekly' && weeklyNutrientChartInstance) {
+        weeklyNutrientChartInstance.destroy();
+    } else if (period === 'monthly' && monthlyNutrientChartInstance) {
+        monthlyNutrientChartInstance.destroy();
+    }
+
+    const ctx = document.getElementById(`${period}NutrientChart`).getContext('2d');
+
+    const protein = averages.protein || 0;
+    const carbs = averages.carbs || 0;
+    const fat = averages.fat || 0;
+
+    const total = protein + carbs + fat;
+    const proteinPercentage = (protein / total) * 100;
+    const carbsPercentage = (carbs / total) * 100;
+    const fatPercentage = (fat / total) * 100;
+
+    const chartData = {
+        labels: ['Protein', 'Carbs', 'Fat'],
+        datasets: [{
+            data: [proteinPercentage, carbsPercentage, fatPercentage],
+            backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56'],
+            hoverBackgroundColor: ['#FF6384', '#36A2EB', '#FFCE56'],
+        }]
+    };
+
+    // Create new pie chart for the selected period (weekly or monthly)
+    if (period === 'weekly') {
+        weeklyNutrientChartInstance = new Chart(ctx, {
+            type: 'pie',
+            data: chartData,
+            options: {
+                responsive: true,
+                plugins: {
+                    tooltip: {
+                        callbacks: {
+                            label: function (tooltipItem) {
+                                return tooltipItem.label + ': ' + tooltipItem.raw.toFixed(2) + '%';
+                            }
+                        }
+                    },
+                    title: {
+                        display: true,
+                        text: 'Weekly Nutrients Breakdown', // Title for the pie chart
+                        font: {
+                            size: 16,
+                        }
+                    }
+                }
+            }
+        });
+    } else if (period === 'monthly') {
+        monthlyNutrientChartInstance = new Chart(ctx, {
+            type: 'pie',
+            data: chartData,
+            options: {
+                responsive: true,
+                plugins: {
+                    tooltip: {
+                        callbacks: {
+                            label: function (tooltipItem) {
+                                return tooltipItem.label + ': ' + tooltipItem.raw.toFixed(2) + '%';
+                            }
+                        }
+                    },
+                    title: {
+                        display: true,
+                        text: 'Monthly Nutrients Breakdown', // Title for the pie chart
+                        font: {
+                            size: 16,
+                        }
+                    }
+                }
+            }
+        });
+    }
+}
+
+// Global variable to store the chart instance
+let workoutChartInstance = null;
+
+async function renderWorkoutGraph(username, period) {
+    // Fetch the workout completion data for the given user and period
+    const response = await fetch(`/get-workout-completions?username=${username}&period=${period}`);
+    const data = await response.json();
+
+    if (data.success) {
+        const labels = data.labels; // Workout names
+        const workoutData = data.data; // Number of completions per workout
+
+        // If a chart instance exists, destroy it properly
+        if (workoutChartInstance) {
+            workoutChartInstance.destroy();
+            console.log('Destroyed previous workout chart');
+        }
+
+        // Get the context for the canvas
+        const ctx = document.getElementById('workoutChart').getContext('2d');
+
+        // Clear the canvas (important step to prevent leftover data)
+        ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+
+        // Create a new chart for the workout completions
+        workoutChartInstance = new Chart(ctx, {
+            type: 'bar', // Bar chart (column chart)
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Workout Completions',
+                    data: workoutData,
+                    backgroundColor: 'rgba(54, 162, 235, 0.5)',
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 1,
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    title: {
+                        display: true,
+                        text: `Workout Completions - ${period.charAt(0).toUpperCase() + period.slice(1)}`, // Title based on the period
+                        font: { size: 16 },
+                    }
+                },
+                scales: {
+                    x: { 
+                        title: {
+                            display: true,
+                            text: 'Workouts'
+                        }
+                    },
+                    y: {
+                        title: {
+                            display: true,
+                            text: 'Number of Completions'
+                        },
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    } else {
+        console.error('Error fetching workout data');
+    }
+}
+
+
+    </script>
+    
+</body>
+</html>
