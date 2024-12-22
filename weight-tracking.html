@@ -1,0 +1,942 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <!-- Font Awesome (for icons) -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+
+
+
+
+    <title>Weight-tracking</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+ 
+        
+        /* Style for logged days */
+        .logged-day {
+            background-color: #4CAF50 !important; /* Green background for logged days */
+            color: white; /* Text color for better visibility */
+            font-weight: bold; /* Make it bold */
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 0;
+            background: url('assets/pic5.jpg') no-repeat center center fixed; /* Add the image */
+            background-size: cover; /* Ensure the image covers the entire background */
+        }
+        
+          /* Navbar Style */
+          .w3-bar {
+            font-family: Arial, sans-serif;
+            background-color: #ffffff;
+            padding: 30px 30px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between; /* Distribute the items between the left and right */
+            align-items: center;
+        }
+
+        .w3-bar-item {
+            padding: 30px 30px;
+            color: #333;
+            font-size: 17px; /* Uniform font size for all items */
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+        .w3-bar-item:hover {
+            background-color: #f4f4f9;
+            color: #007bff;
+        }
+
+        /* Right side: Profile icon and other links */
+        .w3-right {
+            font-size: 17px; /* Ensures the font size is consistent with other links */
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            margin-left: auto;
+        }
+        
+        .container {
+            width: 90%;
+            max-width: 600px;
+            margin: 80px auto 20px; /* Adjusted margin-top to 80px to account for the navbar height */
+            background: white;
+            padding: 20px;
+            box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+        }
+        
+        h1 {
+            text-align: center;
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+        
+        form label {
+            display: block;
+            margin: 10px 0 5px;
+        }
+        
+        form input, form select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        
+        form button {
+            width: 100%;
+            padding: 10px;
+            background-color: #28a745; /* Green background */
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+          
+        }
+        
+        form button:hover {
+            background-color: #218838; /* Darker green on hover */
+        }
+        
+        .progress-section {
+            margin-top: 20px;
+        }
+        
+        .progress-section h2 {
+            font-size: 20px;
+            margin-bottom: 15px;
+        }
+        
+        .activity-summary {
+            padding: 10px;
+            background-color: #e9f7ef;
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+        
+        .activity-summary h3 {
+            font-size: 18px;
+        }
+        
+        @media (max-width: 600px) {
+            .container {
+                width: 95%;
+                padding: 15px;
+            }
+        
+            h1 {
+                font-size: 20px;
+            }
+        
+            form input, form select {
+                padding: 8px;
+                font-size: 14px;
+            }
+        
+            form button {
+                font-size: 14px;
+            }
+        }
+        
+        /* account menu --> */
+        
+    /* Remove hover effect for dropdown */
+        .account-dropdown:hover .dropdown-menu {
+            display: block; /* No longer need this */
+        }
+
+        /* Ensure dropdown menu is hidden by default */
+        .dropdown-menu {
+            display: none;
+            position: absolute;
+            top: 100%;
+            right: 0;
+            z-index: 1000;
+            background-color: #ffffff;
+            box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+            min-width: 200px;
+            padding: 10px 0;
+        }
+
+        
+        /* Show dropdown on hover */
+        .account-dropdown:hover .dropdown-menu {
+            display: block; /* Show the menu */
+        }
+        
+        /* Dropdown item styles */
+        .dropdown-item {
+            display: flex;
+            align-items: center; /* Align text and icons */
+            padding: 12px 20px; /* Increase padding */
+            text-decoration: none;
+            color: #333;
+            font-size: 16px; /* Slightly larger font */
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .dropdown-item:last-child {
+            border-bottom: none; /* Remove border for the last item */
+        }
+        
+        /* Dropdown icon styles */
+        .dropdown-item i {
+            margin-right: 10px; /* Add space between icon and text */
+            color: #28a745; /* Icon color */
+            font-size: 18px; /* Icon size */
+        }
+        
+        /* Hover effect */
+        .dropdown-item:hover {
+            background-color: #f4f4f9; /* Light gray background */
+            color: #007bff; /* Highlight text */
+        }
+
+        .modal {
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+    
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 50%;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+            border-radius: 5px;
+        }
+    
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+    
+        .close:hover,
+        .close:focus {
+            color: #000;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .button-container{
+            display: flex;
+            gap: 10px;  /* Adds a 10px space between the buttons */
+            margin-top: 15px;
+        }
+
+        .weightSection {
+            display: block; /* Default state, will be hidden for weekly view */
+        }
+        
+        #graphChart {
+            display: none; /* Hide by default, will be shown in weekly view */
+        }
+        
+
+
+    </style>
+</head>
+<body>
+
+<!-- Navbar -->
+<div class="w3-top">
+    <div class="w3-bar w3-white w3-padding w3-card top-bar">
+        <!-- Health Tracker link on the left side -->
+        <a href="#home" class="w3-bar-item w3-button">Health Tracker</a>
+        
+        <!-- Links aligned to the right (except Health Tracker) -->
+        <div class="w3-right">
+            <a href="activity.html" class="w3-bar-item w3-button">Daily Activities</a>
+            <a href="nutrition.html" class="w3-bar-item w3-button">Nutrition</a>
+            <a href="weight-tracking.html" class="w3-bar-item w3-button">Weight Tracking</a>
+            <a href="workout-tracking.html" class="w3-bar-item w3-button">Workout Tracking</a>
+            <a href="goals.html" class="w3-bar-item w3-button">Goals</a>
+            <a href="weekly-monthly-summary.html" class="w3-bar-item w3-button">Weekly/Monthly Summary</a>
+            <a href="progress-dashboard.html" class="w3-bar-item w3-button">Progress Dashboard</a>
+            <a href="notifications.html" class="w3-bar-item w3-button">Notifications</a>
+
+            <!-- Account dropdown for profile icon -->
+            <div class="account-dropdown">
+                <button class="w3-bar-item w3-button" id="accountIcon" aria-label="Profile">
+                    <i class="fas fa-user"></i>
+                </button>
+                <div id="accountMenu" class="dropdown-menu">
+                    <a href="account.html" class="dropdown-item">
+                        <i class="fas fa-cog"></i> Account Settings
+                    </a>
+                    <a href="index.html" class="dropdown-item" id="logoutButton">
+                        <i class="fas fa-sign-out-alt"></i> Sign Out
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <h1>Weight Tracking</h1>
+
+    <!-- Weight Logging Form -->
+    <form id="weightForm">
+        <!-- Button Container for Daily, Weekly, Monthly -->
+        <div class="button-container">
+            <button type="button" id="dailyBtn">Daily</button>
+            <button type="button" id="weeklyBtn">Weekly</button>
+            <button type="button" id="monthlyBtn">Monthly</button>
+        </div>
+
+        <!-- Section for weight input and fields -->
+    <div class="weightSection">
+            <label for="logDate">Date:</label>
+            <input type="date" id="logDate" required>
+
+            <label for="weight">Weight:</label>
+            <input type="number" id="weight" placeholder="Enter current weight" required min="0" step="1">
+
+            <div>
+                <h2 id="bmiValue">Your BMI: Calculating...</h2>
+                <canvas id="bmiChart" width="300" height="50" style="border: 1px solid #000;"></canvas>
+            </div>
+
+        <!-- Action Buttons -->
+        <div class="button-container">
+            <button id="saveweightButton" type="button">Log Weight</button>
+            <button id="weightGoalsBtn" type="button">Weight Goal</button>
+        </div>
+   
+
+        <!-- Nutrition Goals Modal -->
+        <div id="weightGoalsModal" class="modal" style="display: none;">
+            <div class="modal-content">
+                <span id="closeModal" class="close">&times;</span>
+                <h3>Set Your Weight Goal</h3>
+                <form id="weightGoalsForm">
+                    <label for="weightGoal">Weight Goal:</label>
+                    <input type="number" id="weightGoal" name="weightGoal" min="0" placeholder="Enter your goal for weight">
+
+                    <button type="button" id="saveGoalsButton">Save Goals</button>
+                </form>
+            </div>
+        </div>
+    </div>
+       <!-- Graph Section -->
+       <div id="graphChart" style="display:none;">
+        <h1>Weight Graph</h1>
+        <canvas id="myChart" width="400" height="200"></canvas>
+    </div>
+    </form>
+</div>
+
+    <script>
+  // Ensure default date is set to today on load and fetch data
+window.addEventListener("load", async function () {
+    const logDateInput = document.getElementById("logDate");
+    const today = new Date().toISOString().split('T')[0];
+    logDateInput.value = today;
+    await fetchAndDisplayWeightLog(today);
+    await calculateBMI(today); // Call calculateBMI on load
+});
+
+// Handle weight logging
+document.getElementById("saveweightButton").addEventListener("click", async function (event) {
+    event.preventDefault();
+
+    const username = sessionStorage.getItem("username");
+    const logDate = document.getElementById("logDate").value;
+    const weight = parseFloat(document.getElementById("weight").value);
+
+    if (!username || isNaN(weight)) {
+        alert("Please fill in all fields with valid values.");
+        return;
+    }
+
+    try {
+        const response = await fetch("/log-weight", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ username, logDate, weight }),
+        });
+
+        if (!response.ok) throw new Error("Error logging weight");
+
+        alert("Weight logged successfully");
+        await calculateBMI(logDate); // Calculate BMI after logging weight
+    } catch (error) {
+        console.error("Error logging weight:", error);
+        alert("Failed to log weight. Please try again.");
+    }
+});
+
+// Add event listener to fetch data when the date is changed
+document.getElementById("logDate").addEventListener("change", async function () {
+    const selectedDate = this.value;
+    await fetchAndDisplayWeightLog(selectedDate);
+    await calculateBMI(selectedDate); // Recalculate BMI on date change
+});
+
+// Fetch and display weight log for a specific date
+async function fetchAndDisplayWeightLog(date) {
+    const username = sessionStorage.getItem('username');
+    if (!username) {
+        alert("Please enter a username to fetch data.");
+        return;
+    }
+
+    try {
+        const response = await fetch(`/get-weight-log?username=${encodeURIComponent(username)}&date=${encodeURIComponent(date)}`);
+        const data = await response.json();
+
+        if (response.ok && data.success) {
+            const { weight } = data.log;
+            document.getElementById("weight").value = weight || "";
+        } else {
+            resetFields();
+            if (data.message) alert(data.message);
+        }
+    } catch (error) {
+        console.error('Error fetching weight log:', error);
+        alert('Failed to fetch weight data.');
+    }
+}
+
+// Reset fields to default values
+function resetFields() {
+    document.getElementById("weight").value = "";
+}
+
+// Fetch and display goals
+async function fetchAndDisplayGoals() {
+    const username = sessionStorage.getItem('username');
+    if (!username) {
+        alert("Please enter a username to fetch goals.");
+        return;
+    }
+
+    try {
+        const response = await fetch(`/get-nutrient-goals?username=${encodeURIComponent(username)}`);
+        const data = await response.json();
+
+        if (response.ok && data.success) {
+            const { weightGoal } = data.goals;
+            const weightGoalInput = document.getElementById("weightGoal");
+            weightGoalInput.value = weightGoal || "";
+            weightGoalInput.required = true; // Ensure it is focusable
+        } else {
+            document.getElementById("weightGoal").value = "";
+            if (data.message) alert(data.message);
+        }
+    } catch (error) {
+        console.error('Error fetching nutrition goals:', error);
+        alert('Failed to fetch nutrition goals.');
+    }
+}
+
+// Function to calculate BMI
+async function calculateBMI(date) {
+    const username = sessionStorage.getItem("username");
+    if (!username) {
+        alert("Please enter a username to fetch data.");
+        return;
+    }
+
+    const bmiBar = document.getElementById("bmiChart");
+    const bmiValue = document.getElementById("bmiValue");
+
+    if (!bmiBar || !bmiValue) {
+        console.error("BMI display elements not found.");
+        return;
+    }
+
+    try {
+        // Fetch user profile to get height
+        const profileResponse = await fetch(`/get-user-profile?username=${encodeURIComponent(username)}`);
+        const profile = await profileResponse.json();
+
+        if (!profileResponse.ok || !profile.height) {
+            throw new Error("Error fetching user profile or missing height data.");
+        }
+
+        const { height } = profile;
+        if (isNaN(height) || height <= 0) {
+            throw new Error("Invalid height value.");
+        }
+
+        // Fetch weight log for the selected date
+        const weightLogResponse = await fetch(`/get-weight-log?username=${encodeURIComponent(username)}&date=${encodeURIComponent(date)}`);
+        const weightLog = await weightLogResponse.json();
+
+        if (!weightLogResponse.ok || !weightLog.log || !weightLog.log.weight) {
+            // Hide BMI visualization if no weight log is found
+            bmiValue.style.fontSize = "20px"; 
+            bmiValue.textContent = `No weight data available for ${date}.`;
+            bmiBar.style.display = "none";
+            return;
+        }
+
+        const { weight } = weightLog.log;
+        if (isNaN(weight) || weight <= 0) {
+            throw new Error("Invalid weight value.");
+        }
+
+        // Calculate BMI
+        const heightInMeters = height / 100; // Assuming height is in cm
+        const bmi = (weight / (heightInMeters ** 2)).toFixed(2); // Keep two decimal places
+
+        // Display BMI
+        bmiValue.style.fontSize = "20px"; 
+        bmiValue.textContent = `Your BMI is: ${bmi}`;
+
+        // Render BMI visualization
+        renderBMIGraph(bmi);
+    } catch (error) {
+        console.error("Error calculating BMI:", error);
+        alert("Failed to calculate BMI. Please try again later.");
+    }
+}
+
+// Render BMI Visualization (Basic Gauge Chart)
+function renderBMIGraph(bmi) {
+    const canvas = document.getElementById("bmiChart");
+    if (!canvas) {
+        console.error("Canvas element not found.");
+        return;
+    }
+
+    const ctx = canvas.getContext("2d");
+
+    // Basic BMI categories
+    const categories = [
+        { range: [0, 18.5], color: 'blue', label: 'Underweight' },
+        { range: [18.5, 24.9], color: 'green', label: 'Normal' },
+        { range: [25, 29.9], color: 'yellow', label: 'Overweight' },
+        { range: [30, Infinity], color: 'red', label: 'Obese' },
+    ];
+
+    const category = categories.find(cat => bmi >= cat.range[0] && bmi < cat.range[1]);
+
+    if (!category) {
+        console.error("BMI category not found.");
+        return;
+    }
+
+    // Clear and draw the gauge
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = category.color;
+    ctx.fillRect(0, 0, bmi * (canvas.width / 40), canvas.height); // Scale to a max BMI of 40
+    ctx.fillStyle = "black";
+    ctx.font = "16px Arial";
+    ctx.fillText(category.label, 10, canvas.height / 2);
+
+    const textX = bmi * (canvas.width / 40) + 10; // 10px padding from the bar
+    const textY = canvas.height / 2;
+
+    // Show the canvas if it was hidden
+    canvas.style.display = "block";
+}
+
+// Reset fields to default values
+function resetFields() {
+    document.getElementById("weight").value = "";
+}
+
+// Weight Goals Modal Handlers
+document.getElementById("weightGoalsBtn").addEventListener("click", () => {
+    const weightGoalsModal = document.getElementById("weightGoalsModal");
+    weightGoalsModal.style.display = "block";
+    fetchAndDisplayGoals();
+});
+
+document.getElementById("closeModal").addEventListener("click", () => {
+    document.getElementById("weightGoalsModal").style.display = "none";
+});
+
+// Fetch and display goals
+async function fetchAndDisplayGoals() {
+    const username = sessionStorage.getItem('username');
+    if (!username) {
+        alert("Please enter a username to fetch goals.");
+        return;
+    }
+
+    try {
+        const response = await fetch(`/get-nutrient-goals?username=${encodeURIComponent(username)}`);
+        const data = await response.json();
+
+        if (response.ok && data.success) {
+            const { weightGoal } = data.goals;
+            const weightGoalInput = document.getElementById("weightGoal");
+            weightGoalInput.value = weightGoal || "";
+            weightGoalInput.required = true; // Ensure it is focusable
+        } else {
+            document.getElementById("weightGoal").value = "";
+            if (data.message) alert(data.message);
+        }
+    } catch (error) {
+        console.error('Error fetching nutrition goals:', error);
+        alert('Failed to fetch nutrition goals.');
+    }
+}
+
+// Save goals via form submission
+document.getElementById("saveGoalsButton").addEventListener("click", async function (event) {
+    event.preventDefault();
+
+    const username = sessionStorage.getItem('username');
+    const weightGoal = document.getElementById("weightGoal").value;
+
+    if (!username || !weightGoal) {
+        alert('Please fill in all fields with valid values.');
+        return;
+    }
+
+    try {
+        const response = await fetch('/set-nutrient-goals', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username, weightGoal }),
+        });
+
+        if (!response.ok) throw new Error('Error saving weight goal');
+
+        alert('Weight goal saved successfully');
+        document.getElementById("weightGoalsModal").style.display = "none";
+    } catch (error) {
+        console.error('Error saving weight goal:', error);
+        alert('Failed to save weight goal. Please try again.');
+    }
+});
+
+// Close modal if clicked outside
+window.addEventListener("click", (event) => {
+    const weightGoalsModal = document.getElementById("weightGoalsModal");
+    if (event.target === weightGoalsModal) {
+        weightGoalsModal.style.display = "none";
+    }
+});
+
+document.getElementById('accountIcon').addEventListener('click', function (event) {
+    var menu = document.getElementById('accountMenu');
+    // Prevent click event from propagating to window (which closes the dropdown)
+    event.stopPropagation();
+    
+    // Toggle the display of the dropdown menu
+    if (menu.style.display === "block") {
+        menu.style.display = "none";
+    } else {
+        menu.style.display = "block";
+    }
+});
+
+// Close the dropdown if the user clicks outside of it
+window.addEventListener('click', function (event) {
+    var dropdown = document.getElementById('accountMenu');
+    var button = document.getElementById('accountIcon');
+    // If the click target is not the button or dropdown, hide the dropdown
+    if (!button.contains(event.target) && !dropdown.contains(event.target)) {
+        dropdown.style.display = "none";
+    }
+});
+
+
+
+
+document.getElementById("dailyBtn").addEventListener("click", function() {
+    document.querySelector(".weightSection").style.display = "block"; // Show weight section
+    document.getElementById("graphChart").style.display = "none"; // Hide graph
+});
+
+document.getElementById("weeklyBtn").addEventListener("click", function() {
+    document.querySelector(".weightSection").style.display = "none"; // Hide weight section
+    document.getElementById("graphChart").style.display = "block"; // Show graph
+    const username = sessionStorage.getItem("username");
+    fetchWeeklyWeight(username);
+
+});
+
+document.getElementById("monthlyBtn").addEventListener("click", function() {
+    document.querySelector(".weightSection").style.display = "none"; // Hide weight section
+    document.getElementById("graphChart").style.display = "block"; // Show graph
+    const username = sessionStorage.getItem("username");
+    fetchMonthlyWeight(username); // Fetch monthly data
+});
+
+
+async function fetchWeeklyWeight(username) {
+    const response = await fetch(`/get-weekly-weight?username=${username}`);
+    const data = await response.json();
+
+    if (data.success) {
+        renderGraph(data.logs, username);
+    } else {
+        console.error(data.error);
+    }
+}
+
+
+async function fetchMonthlyWeight(username) {
+    const response = await fetch(`/get-monthly-weight?username=${username}`);
+    const data = await response.json();
+
+    if (data.success) {
+        renderMonthlyGraph(data.logs, username); // Call renderGraph with monthly data
+    } else {
+        console.error(data.error);
+    }
+}
+
+
+
+
+let chartInstance = null; // Declare chartInstance globally
+
+async function renderGraph(logs, username) {
+    // Fetch weight goal from the server
+    const weightGoal = await fetchWeightGoal(username);
+
+    // If a chart already exists, destroy it before creating a new one
+    if (chartInstance) {
+        chartInstance.destroy();
+    }
+
+    // Get today's date and generate a 7-day range (from 7 days ago to today)
+    const today = new Date();
+    const labels = [];
+    const weights = [];
+
+    // Generate labels for the last 7 days
+    for (let i = 6; i >= 0; i--) {
+        const date = new Date(today);
+        date.setDate(today.getDate() - i);
+        labels.push(date.toLocaleDateString());
+        // Initialize the weight for each day as null (or 0)
+        weights.push(null);
+    }
+
+    // Map the logs to their respective day in the range and fill in the data
+    logs.forEach(log => {
+        const logDate = new Date(log.date).toLocaleDateString();
+        const index = labels.indexOf(logDate);
+        if (index !== -1) {
+            weights[index] = log.weight; // Replace null with actual data
+        }
+    });
+
+    // Ensure that there are no null values (in case some data points are missing)
+    const filteredWeights = weights.filter(weight => weight !== null);
+
+    // Check if there is any valid data
+    if (filteredWeights.length === 0) {
+        console.error("No valid weight data available");
+        return;
+    }
+
+    // Dynamically calculate the min and max values for the Y-axis
+    const minWeight = Math.min(...filteredWeights);
+    const maxWeight = Math.max(...filteredWeights);
+
+    const yMin = Math.max(0, Math.min(minWeight - 10, weightGoal - 10)); // Ensure yMin is below both the min weight and the weight goal
+    const yMax = Math.max(weightGoal + 10, maxWeight + 10); // Ensure max is above both the weight goal and the highest weight
+    
+
+    // Ensure the canvas exists before rendering
+    const ctx = document.getElementById('myChart').getContext('2d');
+    chartInstance = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: labels, // 7-day range
+            datasets: [{
+                label: 'Weight Over Last Week',
+                data: weights, // The weight data for the 7 days
+                borderColor: 'green', // Green color for the weight trend line
+                backgroundColor: 'green', // Same color for the dots
+                fill: false,
+                pointRadius: 5, // Show dots at each data point
+                pointBackgroundColor: 'green', // Green dots
+                borderWidth: 2,
+            },
+            {
+                // Dataset for the weight goal line
+                label: 'Weight Goal',
+                data: Array(7).fill(weightGoal), // Fill the array with the constant weight goal value
+                borderColor: 'red', // Red color for the weight goal line
+                borderWidth: 2,
+                borderDash: [], // Solid line for the goal
+                fill: false,
+                pointRadius: 0, // Remove dots from the weight goal line
+                tension: 0, // Ensure it's a straight horizontal line
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    min: yMin, // Dynamic minimum value (10 less than min weight)
+                    max: yMax, // Dynamic maximum value
+                    beginAtZero: false // Prevent the scale from starting at zero to focus on fluctuations
+                }
+            }
+        }
+    });
+}
+
+
+async function renderMonthlyGraph(logs, username) {
+    // Fetch weight goal from the server
+    const weightGoal = await fetchWeightGoal(username);
+
+    // If a chart already exists, destroy it before creating a new one
+    if (chartInstance) {
+        chartInstance.destroy();
+    }
+
+    // Get today's date and generate a 30-day range (from 30 days ago to today)
+    const today = new Date();
+    const labels = [];
+    const weights = [];
+
+    // Generate labels for the last 30 days
+    for (let i = 29; i >= 0; i--) {
+        const date = new Date(today);
+        date.setDate(today.getDate() - i);
+        labels.push(date.toLocaleDateString()); // Generate date labels for the last 30 days
+        weights.push(null); // Initialize weight for each day as null (or 0)
+    }
+
+    // Map the logs to their respective day in the range and fill in the data
+    logs.forEach(log => {
+        const logDate = new Date(log.date).toLocaleDateString();
+        const index = labels.indexOf(logDate);
+        if (index !== -1) {
+            weights[index] = log.weight; // Replace null with actual data
+        }
+    });
+
+    // Ensure that there are no null values (in case some data points are missing)
+    const filteredWeights = weights.filter(weight => weight !== null);
+
+    // Check if there is any valid data
+    if (filteredWeights.length === 0) {
+        console.error("No valid weight data available");
+        return;
+    }
+
+    // Dynamically calculate the min and max values for the Y-axis
+    const minWeight = Math.min(...filteredWeights);
+    const maxWeight = Math.max(...filteredWeights);
+
+    // Adjust Y-axis min and max values for the monthly graph
+    const yMin = Math.max(0, Math.min(minWeight - 10, weightGoal - 10)); // Ensure yMin is below both the min weight and the weight goal
+    const yMax = Math.max(weightGoal + 10, maxWeight + 10); // Ensure max is above both the weight goal and the highest weight
+
+    // Ensure the canvas exists before rendering
+    const ctx = document.getElementById('myChart').getContext('2d');
+    chartInstance = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: labels, // 30-day range
+            datasets: [{
+                label: 'Weight Over Last Month',
+                data: weights, // The weight data for the 30 days
+                borderColor: 'green', // Green color for the weight trend line
+                backgroundColor: 'green', // Same color for the dots
+                fill: false,
+                pointRadius: 5, // Show dots at each data point
+                pointBackgroundColor: 'green', // Green dots
+                borderWidth: 2,
+            },
+            {
+                // Dataset for the weight goal line
+                label: 'Weight Goal',
+                data: Array(30).fill(weightGoal), // Fill the array with the constant weight goal value
+                borderColor: 'red', // Red color for the weight goal line
+                borderWidth: 2,
+                borderDash: [], // Solid line for the goal
+                fill: false,
+                pointRadius: 0, // Remove dots from the weight goal line
+                tension: 0, // Ensure it's a straight horizontal line
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    min: yMin, // Dynamic minimum value (10 less than min weight)
+                    max: yMax, // Dynamic maximum value
+                    beginAtZero: false // Prevent the scale from starting at zero to focus on fluctuations
+                }
+            }
+        }
+    });
+}
+
+
+// Fetch weight goal from the server
+async function fetchWeightGoal(username) {
+    try {
+        const response = await fetch(`/get-nutrient-goals?username=${encodeURIComponent(username)}`);
+        const data = await response.json(); // Parse the JSON response
+
+        // Access weightGoal from the data
+        const { weightGoal } = data.goals || {}; // Default to empty if goals is undefined
+
+        return weightGoal || 60; // Return the weight goal or default to 60 if not set
+    } catch (error) {
+        console.error('Error fetching weight goal:', error);
+        return 60; // Return a default value of 60 if the fetch fails
+    }
+}
+
+window.addEventListener("load", function () {
+    const logDateInput = document.getElementById("logDate");
+    const today = new Date();
+    
+    // Get year, month, and day
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, '0'); // Months are zero-based
+    const day = String(today.getDate()).padStart(2, '0');
+
+    // Format as YYYY-MM-DD
+    const formattedDate = `${year}-${month}-${day}`;
+    
+    // Set the value of the input field
+    logDateInput.value = formattedDate;
+});
+
+  // Set the max attribute of the date input to today's date
+  const today = new Date().toISOString().split('T')[0]; // Get today's date in YYYY-MM-DD format
+  document.getElementById('logDate').setAttribute('max', today);
+
+    </script>
+    
+</body>
+</html>

@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <!-- Font Awesome (for icons) -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+
+
+    <title>Nutrition</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+ 
+        
+        /* Style for logged days */
+        .logged-day {
+            background-color: #4CAF50 !important; /* Green background for logged days */
+            color: white; /* Text color for better visibility */
+            font-weight: bold; /* Make it bold */
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 0;
+            background: url('assets/pic5.jpg') no-repeat center center fixed; /* Add the image */
+            background-size: cover; /* Ensure the image covers the entire background */
+        }
+        
+          /* Navbar Style */
+          .w3-bar {
+            font-family: Arial, sans-serif;
+            background-color: #ffffff;
+            padding: 30px 30px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between; /* Distribute the items between the left and right */
+            align-items: center;
+        }
+
+        .w3-bar-item {
+            padding: 30px 30px;
+            color: #333;
+            font-size: 17px; /* Uniform font size for all items */
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+        .w3-bar-item:hover {
+            background-color: #f4f4f9;
+            color: #007bff;
+        }
+
+        /* Right side: Profile icon and other links */
+        .w3-right {
+            font-size: 17px; /* Ensures the font size is consistent with other links */
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            margin-left: auto;
+        }
+        
+        .container {
+            width: 90%;
+            max-width: 600px;
+            margin: 80px auto 20px; /* Adjusted margin-top to 80px to account for the navbar height */
+            background: white;
+            padding: 20px;
+            box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+        }
+        
+        h1 {
+            text-align: center;
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+        
+        form label {
+            display: block;
+            margin: 10px 0 5px;
+        }
+        
+        form input, form select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        
+        form button {
+            width: 100%;
+            padding: 10px;
+            background-color: #28a745; /* Green background */
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+          
+        }
+        
+        form button:hover {
+            background-color: #218838; /* Darker green on hover */
+        }
+        
+        .progress-section {
+            margin-top: 20px;
+        }
+        
+        .progress-section h2 {
+            font-size: 20px;
+            margin-bottom: 15px;
+        }
+        
+        .activity-summary {
+            padding: 10px;
+            background-color: #e9f7ef;
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+        
+        .activity-summary h3 {
+            font-size: 18px;
+        }
+        
+        @media (max-width: 600px) {
+            .container {
+                width: 95%;
+                padding: 15px;
+            }
+        
+            h1 {
+                font-size: 20px;
+            }
+        
+            form input, form select {
+                padding: 8px;
+                font-size: 14px;
+            }
+        
+            form button {
+                font-size: 14px;
+            }
+        }
+        
+        /* account menu --> */
+        
+    /* Remove hover effect for dropdown */
+        .account-dropdown:hover .dropdown-menu {
+            display: block; /* No longer need this */
+        }
+
+        /* Ensure dropdown menu is hidden by default */
+        .dropdown-menu {
+            display: none;
+            position: absolute;
+            top: 100%;
+            right: 0;
+            z-index: 1000;
+            background-color: #ffffff;
+            box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+            min-width: 200px;
+            padding: 10px 0;
+        }
+
+        
+        /* Show dropdown on hover */
+        .account-dropdown:hover .dropdown-menu {
+            display: block; /* Show the menu */
+        }
+        
+        /* Dropdown item styles */
+        .dropdown-item {
+            display: flex;
+            align-items: center; /* Align text and icons */
+            padding: 12px 20px; /* Increase padding */
+            text-decoration: none;
+            color: #333;
+            font-size: 16px; /* Slightly larger font */
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .dropdown-item:last-child {
+            border-bottom: none; /* Remove border for the last item */
+        }
+        
+        /* Dropdown icon styles */
+        .dropdown-item i {
+            margin-right: 10px; /* Add space between icon and text */
+            color: #28a745; /* Icon color */
+            font-size: 18px; /* Icon size */
+        }
+        
+        /* Hover effect */
+        .dropdown-item:hover {
+            background-color: #f4f4f9; /* Light gray background */
+            color: #007bff; /* Highlight text */
+        }
+
+        .modal {
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+    
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 50%;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+            border-radius: 5px;
+        }
+    
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+    
+        .close:hover,
+        .close:focus {
+            color: #000;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .button-container{
+            display: flex;
+            gap: 10px;  /* Adds a 10px space between the buttons */
+            margin-top: 15px;
+        }
+
+        progress {
+            width: 80%;         /* Full width */
+            height: 10px;        /* Height of the progress bar */
+            border-radius: 10px; /* Optional: rounded corners */
+            background-color: #f3f3f3; /* Light gray background */
+        }
+        
+        /* Green color for the progress bar */
+        progress::-webkit-progress-bar {
+            background-color: #f3f3f3; /* Light gray background */
+        }
+        
+        progress::-webkit-progress-value {
+            background-color: #4caf50; /* Green color for progress */
+            border-radius: 10px;       /* Optional: rounded corners */
+        }
+        
+        progress::-moz-progress-bar {
+            background-color: #4caf50; /* Green color for progress */
+            border-radius: 10px;       /* Optional: rounded corners */
+        }
+
+
+    </style>
+</head>
+<body>
+
+<!-- Navbar -->
+<div class="w3-top">
+    <div class="w3-bar w3-white w3-padding w3-card top-bar">
+        <!-- Health Tracker link on the left side -->
+        <a href="#home" class="w3-bar-item w3-button">Health Tracker</a>
+        
+        <!-- Links aligned to the right (except Health Tracker) -->
+        <div class="w3-right">
+            <a href="activity.html" class="w3-bar-item w3-button">Daily Activities</a>
+            <a href="nutrition.html" class="w3-bar-item w3-button">Nutrition</a>
+            <a href="weight-tracking.html" class="w3-bar-item w3-button">Weight Tracking</a>
+            <a href="workout-tracking.html" class="w3-bar-item w3-button">Workout Tracking</a>
+            <a href="goals.html" class="w3-bar-item w3-button">Goals</a>
+            <a href="weekly-monthly-summary.html" class="w3-bar-item w3-button">Weekly/Monthly Summary</a>
+            <a href="progress-dashboard.html" class="w3-bar-item w3-button">Progress Dashboard</a>
+            <a href="notifications.html" class="w3-bar-item w3-button">Notifications</a>
+
+            <!-- Account dropdown for profile icon -->
+            <div class="account-dropdown">
+                <button class="w3-bar-item w3-button" id="accountIcon">
+                    <i class="fas fa-user"></i>
+                </button>
+                <div id="accountMenu" class="dropdown-menu">
+                    <a href="account.html" class="dropdown-item">
+                        <i class="fas fa-cog"></i> Account Settings
+                    </a>
+                    <a href="index.html" class="dropdown-item" id="logoutButton">
+                        <i class="fas fa-sign-out-alt"></i> Sign Out
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+    <div class="container">
+        <h1>Nutrition</h1>
+
+        <!-- Nutrition Logging Form -->
+        <form id="nutritionForm">
+
+            <label for="logDate">Date:</label>
+            <input type="date" id="logDate" required>
+
+            <label for="calories">Calories:</label>
+            <input type="number" id="calories" placeholder="Enter daily calories" required min="0" step="1">
+            <!-- Progress Bar for Calories -->
+            <div class="progress-bar">
+                <label for="calories">Calories:</label>
+                <progress id="caloriesProgress" value="0" max="100"></progress>
+                <span id="caloriesProgressText">0%</span>
+            </div>
+
+            <label for="protein">Protein (g):</label>
+            <input type="number" id="protein" placeholder="Enter protein intake in grams" required min="0" step="0.1">
+              <!-- Progress Bar for Protein -->
+            <div class="progress-bar">
+                <label for="protein">Protein:</label>
+                <progress id="proteinProgress" value="0" max="100"></progress>
+                <span id="proteinProgressText">0%</span>
+            </div>
+
+            <label for="fats">Fats (g):</label>
+            <input type="number" id="fats" placeholder="Enter fat intake in grams" required min="0" step="0.1">
+            <!-- Progress Bar for Fats -->
+            <div class="progress-bar">
+                <label for="fats">Fats:</label>
+                <progress id="fatsProgress" value="0" max="100"></progress>
+                <span id="fatsProgressText">0%</span>
+            </div>
+
+            <label for="carbohydrates">Carbohydrates (g):</label>
+            <input type="number" id="carbohydrates" placeholder="Enter carbohydrate intake in grams" required min="0" step="0.1">
+             <!-- Progress Bar for Carbohydrates -->
+            <div class="progress-bar">
+                <label for="carbohydrates">Carbohydrates:</label>
+                <progress id="carbohydratesProgress" value="0" max="100"></progress>
+                <span id="carbohydratesProgressText">0%</span>
+            </div>
+
+            <label for="water">Water (ml):</label>
+            <input type="number" id="water" placeholder="Enter water intake in milliliters" required min="0" step="10">
+                <!-- Progress Bar for Water -->
+            <div class="progress-bar">
+                <label for="water">Water:</label>
+                <progress id="waterProgress" value="0" max="100"></progress>
+                <span id="waterProgressText">0%</span>
+            </div>
+
+            <div class="button-container">
+                <button type="submit">Log Nutrition</button>
+                <button id="nutritionGoalsBtn" type="button">Nutrition Goals</button>
+            </div>
+            
+<!-- Nutrition Goals Modal -->
+<div id="nutritionGoalsModal" class="modal" style="display: none;">
+    <div class="modal-content">
+        <span id="closeModal" class="close">&times;</span>
+        <h3>Set Your Nutrition Goals</h3>
+        <form id="nutritionGoalsForm">
+            <label for="caloriesGoal">Calories Goal:</label>
+            <input type="number" id="caloriesGoal" name="caloriesGoal" min="0" placeholder="Enter your goal for calories">
+
+            <label for="proteinGoal">Protein Goal (g):</label>
+            <input type="number" id="proteinGoal" name="proteinGoal" min="0" placeholder="Enter your goal for protein">
+
+            <label for="fatsGoal">Fats Goal (g):</label>
+            <input type="number" id="fatsGoal" name="fatsGoal" min="0" placeholder="Enter your goal for fats">
+
+            <label for="carbohydratesGoal">Carbohydrates Goal (g):</label>
+            <input type="number" id="carbohydratesGoal" name="carbohydratesGoal" min="0" placeholder="Enter your goal for carbs">
+
+            <label for="waterGoal">Water Goal (ml):</label>
+            <input type="number" id="waterGoal" name="waterGoal" min="0" placeholder="Enter your goal for water">
+
+            <button type="button" id="saveGoalsButton">Save Goals</button>
+        </form>
+    </div>
+</div>
+
+        </form>
+    </div>
+
+    <script>
+        // Ensure default date is set to today on load
+        window.addEventListener("load", function () {
+            const logDateInput = document.getElementById("logDate");
+            const today = new Date().toISOString().split('T')[0];
+            logDateInput.value = today;
+        });
+
+    
+        document.getElementById("nutritionForm").addEventListener("submit", async function (event) {
+            event.preventDefault();
+        
+            const username = sessionStorage.getItem('username');
+            const logDate = document.getElementById("logDate").value;
+            const calories = parseFloat(document.getElementById("calories").value);
+            const protein = parseFloat(document.getElementById("protein").value);
+            const fats = parseFloat(document.getElementById("fats").value);
+            const carbohydrates = parseFloat(document.getElementById("carbohydrates").value);
+            const water = parseFloat(document.getElementById("water").value);
+        
+            if (!username || isNaN(calories) || isNaN(protein) || isNaN(fats) || isNaN(carbohydrates) || isNaN(water)) {
+                alert('Please fill in all fields with valid values.');
+                return;
+            }
+        
+            try {
+                const response = await fetch('/log-nutrients', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, logDate, calories, protein, fats, carbohydrates, water }),
+                });
+        
+                if (!response.ok) throw new Error('Error logging nutrients');
+        
+                alert('Nutrition logged successfully');
+                location.reload(); // Refresh to show updated log
+            } catch (error) {
+                console.error('Error logging nutrients:', error);
+                alert('Failed to log nutrition. Please try again.');
+            }
+        });
+
+
+         // Ensure default date is set to today on load and fetch data
+    window.addEventListener("load", async function () {
+        const logDateInput = document.getElementById("logDate");
+        const today = new Date().toISOString().split('T')[0];
+        logDateInput.value = today;
+        await fetchAndDisplayNutrientLog(today);
+    });
+
+    // Add event listener to fetch data when the date is changed
+    document.getElementById("logDate").addEventListener("change", async function () {
+        const selectedDate = this.value;
+        await fetchAndDisplayNutrientLog(selectedDate);
+    });
+
+   
+
+    // Fetch and display nutrient log for a specific date
+    async function fetchAndDisplayNutrientLog(date) {
+        const username = sessionStorage.getItem('username');
+        if (!username) {
+            alert("Please enter a username to fetch data.");
+            return;
+        }
+
+        try {
+            const response = await fetch(`/get-nutrient-log?username=${encodeURIComponent(username)}&date=${encodeURIComponent(date)}`);
+            const data = await response.json();
+            await updateProgressBars(username); 
+
+            if (response.ok && data.success) {
+                // Populate fields with fetched data
+                const { calories, protein, fats, carbohydrates, water } = data.log;
+                document.getElementById("calories").value = calories;
+                document.getElementById("protein").value = protein;
+                document.getElementById("fats").value = fats;
+                document.getElementById("carbohydrates").value = carbohydrates;
+                document.getElementById("water").value = water;
+                
+            } else {
+                // If no data found, reset fields to default
+                resetFields();
+                if (data.message) alert(data.message);
+            }
+        } catch (error) {
+            console.error('Error fetching nutrient log:', error);
+            alert('Failed to fetch nutrient data.');
+        }
+    }
+
+    // Reset fields to default values
+    function resetFields() {
+        document.getElementById("calories").value = "";
+        document.getElementById("protein").value = "";
+        document.getElementById("fats").value = "";
+        document.getElementById("carbohydrates").value = "";
+        document.getElementById("water").value = "";
+    }
+
+
+    document.getElementById('accountIcon').addEventListener('click', function (event) {
+        var menu = document.getElementById('accountMenu');
+        // Prevent click event from propagating to window (which closes the dropdown)
+        event.stopPropagation();
+        
+        // Toggle the display of the dropdown menu
+        if (menu.style.display === "block") {
+            menu.style.display = "none";
+        } else {
+            menu.style.display = "block";
+        }
+    });
+    
+    // Close the dropdown if the user clicks outside of it
+    window.addEventListener('click', function (event) {
+        var dropdown = document.getElementById('accountMenu');
+        var button = document.getElementById('accountIcon');
+        // If the click target is not the button or dropdown, hide the dropdown
+        if (!button.contains(event.target) && !dropdown.contains(event.target)) {
+            dropdown.style.display = "none";
+        }
+    });
+
+
+        // Open and close the modal
+        const nutritionGoalsBtn = document.getElementById("nutritionGoalsBtn");
+        const nutritionGoalsModal = document.getElementById("nutritionGoalsModal");
+        const closeModal = document.getElementById("closeModal");
+    
+        nutritionGoalsBtn.addEventListener("click", () => {
+            nutritionGoalsModal.style.display = "block";
+            fetchAndDisplayGoals(); // Load existing goals if available
+        });
+    
+        closeModal.addEventListener("click", () => {
+            nutritionGoalsModal.style.display = "none";
+        });
+    
+        // Save goals via form submission
+        document.getElementById("saveGoalsButton").addEventListener("click", async function () {
+            event.preventDefault();
+        
+            const username = sessionStorage.getItem('username');
+            const caloriesGoal = document.getElementById("caloriesGoal").value;
+            const proteinGoal = document.getElementById("proteinGoal").value;
+            const fatsGoal = document.getElementById("fatsGoal").value;
+            const carbohydratesGoal = document.getElementById("carbohydratesGoal").value;
+            const waterGoal = document.getElementById("waterGoal").value;
+        
+            if (!username || !caloriesGoal || !proteinGoal || !fatsGoal || !carbohydratesGoal || !waterGoal) {
+                alert('Please fill in all fields with valid values.');
+                return;
+            }
+        
+            try {
+                const response = await fetch('/set-nutrient-goals', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        username,
+                        caloriesGoal,
+                        proteinGoal,
+                        fatsGoal,
+                        carbohydratesGoal,
+                        waterGoal
+                    }),
+                });
+        
+                if (!response.ok) throw new Error('Error saving nutrition goals');
+        
+                alert('Nutrition goals saved successfully');
+                nutritionGoalsModal.style.display = "none"; // Close the modal after saving
+
+                 // After saving goals, refresh the progress bars
+                await updateProgressBars(username); 
+
+            } catch (error) {
+                console.error('Error saving nutrition goals:', error);
+                alert('Failed to save nutrition goals. Please try again.');
+            }
+        });
+    
+        // Fetch and display goals
+        async function fetchAndDisplayGoals() {
+            const username = sessionStorage.getItem('username');
+            if (!username) {
+                alert("Please enter a username to fetch goals.");
+                return;
+            }
+    
+            try {
+                const response = await fetch(`/get-nutrient-goals?username=${encodeURIComponent(username)}`);
+                const data = await response.json();
+    
+                if (response.ok && data.success) {
+                    const { caloriesGoal, proteinGoal, fatsGoal, carbohydratesGoal, waterGoal } = data.goals;
+                    document.getElementById("caloriesGoal").value = caloriesGoal || "";
+                    document.getElementById("proteinGoal").value = proteinGoal || "";
+                    document.getElementById("fatsGoal").value = fatsGoal || "";
+                    document.getElementById("carbohydratesGoal").value = carbohydratesGoal || "";
+                    document.getElementById("waterGoal").value = waterGoal || "";
+                } else {
+                    document.getElementById("caloriesGoal").value = "";
+                    document.getElementById("proteinGoal").value = "";
+                    document.getElementById("fatsGoal").value = "";
+                    document.getElementById("carbohydratesGoal").value = "";
+                    document.getElementById("waterGoal").value = waterGoal || "";
+                    if (data.message) alert(data.message);
+                }
+            } catch (error) {
+                console.error('Error fetching nutrition goals:', error);
+                alert('Failed to fetch nutrition goals.');
+            }
+        }
+    
+        // Close modal if clicked outside
+        window.onclick = function (event) {
+            if (event.target === nutritionGoalsModal) {
+                nutritionGoalsModal.style.display = "none";
+            }
+        };
+    
+        // Function to update the progress bars
+function updateProgressBars(currentValue, goalValue, progressBarId, progressTextId) {
+    const progressBar = document.getElementById(progressBarId);
+    const progressText = document.getElementById(progressTextId);
+
+    if (goalValue > 0) {
+        const progress = (currentValue / goalValue) * 100;
+        progressBar.value = progress;
+        progressText.textContent = `${Math.round(progress)}%`; // Show the percentage, even if it's more than 100%
+    } else {
+        // If no goal is set, set the progress bar to 0
+        progressBar.value = 0;
+        progressText.textContent = "0%";
+    }
+}
+
+// Fetch and display nutrient log and update progress bars
+async function fetchAndDisplayNutrientLog(date) {
+    const username = sessionStorage.getItem('username');
+
+    try {
+        // Make sure you're calling the correct endpoint for the nutrient log
+        const response = await fetch(`/get-nutrient-log?username=${encodeURIComponent(username)}&date=${encodeURIComponent(date)}`);
+        const data = await response.json();
+
+        if (response.ok && data.success) {
+            // Check if data.log exists
+            if (data.log) {
+                // Populate fields with fetched data
+                const { calories, protein, fats, carbohydrates, water } = data.log;
+                document.getElementById("calories").value = calories;
+                document.getElementById("protein").value = protein;
+                document.getElementById("fats").value = fats;
+                document.getElementById("carbohydrates").value = carbohydrates;
+                document.getElementById("water").value = water;
+
+                // Call function to update progress bars for each nutrient
+                const goals = await fetchGoals(username);  // Fetch saved goals for the user
+                if (goals) {
+                    updateProgressBars(calories, goals.caloriesGoal, "caloriesProgress", "caloriesProgressText");
+                    updateProgressBars(protein, goals.proteinGoal, "proteinProgress", "proteinProgressText");
+                    updateProgressBars(fats, goals.fatsGoal, "fatsProgress", "fatsProgressText");
+                    updateProgressBars(carbohydrates, goals.carbohydratesGoal, "carbohydratesProgress", "carbohydratesProgressText");
+                    updateProgressBars(water, goals.waterGoal, "waterProgress", "waterProgressText");
+                }
+            } else {
+                // If the 'log' is undefined or doesn't exist in the response
+                console.error("Nutrient log data is missing in the response.");
+                alert('No nutrient data found for the selected date.');
+            }
+        } else {
+            // If no data found, reset fields to default
+            resetFields();
+            if (data.message) alert(data.message);
+        }
+    } catch (error) {
+        console.error('Error fetching nutrient log:', error);
+        alert('Failed to fetch progress bar data.');
+    }
+}
+
+// Function to fetch goals for the user
+async function fetchGoals(username) {
+    try {
+        const response = await fetch(`/get-nutrient-goals?username=${encodeURIComponent(username)}`);
+        const data = await response.json();
+        return data.goals || {};
+    } catch (error) {
+        console.error('Error fetching goals:', error);
+        return {};
+    }
+}
+
+async function refreshProgressBars(username) {
+    try {
+        const today = new Date().toISOString().split('T')[0]; // Get today's date
+        const response = await fetch(`/get-nutrient-log?username=${encodeURIComponent(username)}&date=${encodeURIComponent(today)}`);
+        const data = await response.json();
+
+        if (response.ok && data.success && data.log) {
+            const { calories, protein, fats, carbohydrates, water } = data.log;
+            const goals = await fetchGoals(username);  // Fetch saved goals for the user
+
+            // Update progress bars for each nutrient
+            updateProgressBars(calories, goals.caloriesGoal, "caloriesProgress", "caloriesProgressText");
+            updateProgressBars(protein, goals.proteinGoal, "proteinProgress", "proteinProgressText");
+            updateProgressBars(fats, goals.fatsGoal, "fatsProgress", "fatsProgressText");
+            updateProgressBars(carbohydrates, goals.carbohydratesGoal, "carbohydratesProgress", "carbohydratesProgressText");
+            updateProgressBars(water, goals.waterGoal, "waterProgress", "waterProgressText");
+        } else {
+            console.error("Error fetching nutrient log data after saving goals.");
+        }
+    } catch (error) {
+        console.error('Error refreshing progress bars:', error);
+    }
+}
+
+
+
+    </script>
+    
+</body>
+</html>

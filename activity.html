@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <!-- Font Awesome (for icons) -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+
+
+    <title>Activity Tracking</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        /* Style for logged days */
+        .logged-day {
+            background-color: #4CAF50 !important; /* Green background for logged days */
+            color: white; /* Text color for better visibility */
+            font-weight: bold; /* Make it bold */
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 0;
+            background: url('assets/pic5.jpg') no-repeat center center fixed; /* Add the image */
+            background-size: cover; /* Ensure the image covers the entire background */
+        }
+        
+          /* Navbar Style */
+          .w3-bar {
+            font-family: Arial, sans-serif;
+            background-color: #ffffff;
+            padding: 30px 30px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between; /* Distribute the items between the left and right */
+            align-items: center;
+        }
+
+        .w3-bar-item {
+            padding: 30px 30px;
+            color: #333;
+            font-size: 17px; /* Uniform font size for all items */
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+        .w3-bar-item:hover {
+            background-color: #f4f4f9;
+            color: #007bff;
+        }
+
+        /* Right side: Profile icon and other links */
+        .w3-right {
+            font-size: 17px; /* Ensures the font size is consistent with other links */
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            margin-left: auto;
+        }
+        
+        .container {
+            width: 90%;
+            max-width: 600px;
+            margin: 80px auto 20px; /* Adjusted margin-top to 80px to account for the navbar height */
+            background: white;
+            padding: 20px;
+            box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+        }
+        
+        h1 {
+            text-align: center;
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+        
+        form label {
+            display: block;
+            margin: 10px 0 5px;
+        }
+        
+        form input, form select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        
+        form button {
+            width: 100%;
+            padding: 10px;
+            background-color: #28a745; /* Green background */
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        
+        form button:hover {
+            background-color: #218838; /* Darker green on hover */
+        }
+        
+        .progress-section {
+            margin-top: 20px;
+        }
+        
+        .progress-section h2 {
+            font-size: 20px;
+            margin-bottom: 15px;
+        }
+        
+        .activity-summary {
+            padding: 10px;
+            background-color: #e9f7ef;
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+        
+        .activity-summary h3 {
+            font-size: 18px;
+        }
+        
+        @media (max-width: 600px) {
+            .container {
+                width: 95%;
+                padding: 15px;
+            }
+        
+            h1 {
+                font-size: 20px;
+            }
+        
+            form input, form select {
+                padding: 8px;
+                font-size: 14px;
+            }
+        
+            form button {
+                font-size: 14px;
+            }
+        }
+        
+        /* account menu --> */
+        
+    /* Remove hover effect for dropdown */
+.account-dropdown:hover .dropdown-menu {
+    display: block; /* No longer need this */
+}
+
+/* Ensure dropdown menu is hidden by default */
+.dropdown-menu {
+    display: none;
+    position: absolute;
+    top: 100%;
+    right: 0;
+    z-index: 1000;
+    background-color: #ffffff;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
+    min-width: 200px;
+    padding: 10px 0;
+}
+
+        
+        /* Show dropdown on hover */
+        .account-dropdown:hover .dropdown-menu {
+            display: block; /* Show the menu */
+        }
+        
+        /* Dropdown item styles */
+        .dropdown-item {
+            display: flex;
+            align-items: center; /* Align text and icons */
+            padding: 12px 20px; /* Increase padding */
+            text-decoration: none;
+            color: #333;
+            font-size: 16px; /* Slightly larger font */
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .dropdown-item:last-child {
+            border-bottom: none; /* Remove border for the last item */
+        }
+        
+        /* Dropdown icon styles */
+        .dropdown-item i {
+            margin-right: 10px; /* Add space between icon and text */
+            color: #28a745; /* Icon color */
+            font-size: 18px; /* Icon size */
+        }
+        
+        /* Hover effect */
+        .dropdown-item:hover {
+            background-color: #f4f4f9; /* Light gray background */
+            color: #007bff; /* Highlight text */
+        }
+
+      
+      
+
+        
+
+    </style>
+</head>
+<body>
+<!-- Navbar -->
+<div class="w3-top">
+    <div class="w3-bar w3-white w3-padding w3-card top-bar">
+        <!-- Health Tracker link on the left side -->
+        <a href="#home" class="w3-bar-item w3-button">Health Tracker</a>
+        
+        <!-- Links aligned to the right (except Health Tracker) -->
+        <div class="w3-right">
+            <a href="activity.html" class="w3-bar-item w3-button">Daily Activities</a>
+            <a href="nutrition.html" class="w3-bar-item w3-button">Nutrition</a>
+            <a href="weight-tracking.html" class="w3-bar-item w3-button">Weight Tracking</a>
+            <a href="workout-tracking.html" class="w3-bar-item w3-button">Workout Tracking</a>
+            <a href="goals.html" class="w3-bar-item w3-button">Goals</a>
+            <a href="weekly-monthly-summary.html" class="w3-bar-item w3-button">Weekly/Monthly Summary</a>
+            <a href="progress-dashboard.html" class="w3-bar-item w3-button">Progress Dashboard</a>
+            <a href="notifications.html" class="w3-bar-item w3-button">Notifications</a>
+
+            <!-- Account dropdown for profile icon -->
+            <div class="account-dropdown">
+                <button class="w3-bar-item w3-button" id="accountIcon">
+                    <i class="fas fa-user"></i>
+                </button>
+                <div id="accountMenu" class="dropdown-menu">
+                    <a href="account.html" class="dropdown-item">
+                        <i class="fas fa-cog"></i> Account Settings
+                    </a>
+                    <a href="index.html" class="dropdown-item" id="logoutButton">
+                        <i class="fas fa-sign-out-alt"></i> Sign Out
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+    <div class="container">
+        <h1>Activity Tracking</h1>
+
+        <!-- Activity Logging Form -->
+        <form id="activityForm">
+
+            <label for="logDate">Date:</label>
+            <input type="date" id="logDate" value="" required max="" >
+
+            <label for="steps">Steps Walked:</label>
+            <input type="number" id="steps" placeholder="Enter steps walked today" required value="0" min="0" step="1">
+
+            <label for="workout">Select Workout Plan:</label>
+            <select id="workout" required>
+                <option value="" disabled selected>Select a workout plan</option>
+                <option value="None">None</option>
+                <option value="Back Workouts">Back Workouts</option>
+                <option value="Chest Workouts">Chest Workouts</option>
+                <option value="Leg Workouts">Leg Workouts</option>
+                <option value="Arm Workouts">Arm Workouts</option>
+                <option value="Core Workouts">Core Workouts</option>
+                <option value="Cardio Workouts">Cardio Workouts</option>
+                <option value="Full-Body Workouts">Full-Body Workouts</option>
+                <option value="Flexibility and Mobility Workouts">Flexibility and Mobility Workouts</option>
+            </select>
+            
+            <label for="workoutDuration" id="workoutDurationLabel" style="display: none;">Workout Duration (minutes):</label>
+            <input type="number" id="workoutDuration" placeholder="Enter workout duration" value="0" style="display: none;" min="0" max="1440" step="1" required>
+            
+            
+            <label for="sleep">Sleep hours:</label>
+            <input type="number" id="sleep" placeholder="Enter hours slept" required value="0" min="0" max="24" step="1">
+
+            <button type="submit">Log Activity</button>
+        </form>
+
+    <!-- Progress Section -->
+<div class="progress-section">
+    <h2>Activity Progress</h2>
+        <!-- Calendar -->
+        <label for="calendar">Select Date (optional):</label>
+        <input type="date" id="calendar" style="margin-bottom: 20px;" max=""/>
+    <div id="activitySummary" class="activity-summary" >
+        <h3>Loading...</h3>
+    </div>
+</div>
+
+
+
+<script>
+    // Get elements
+    const workoutSelect = document.getElementById("workout");
+    const workoutDurationInput = document.getElementById("workoutDuration");
+    const workoutDurationLabel = document.getElementById("workoutDurationLabel");
+    const stepsInput = document.getElementById("steps");
+    const sleepInput = document.getElementById("sleep");
+    const logDateInput = document.getElementById("logDate");
+    const calDateInput = document.getElementById("calendar");
+
+     // Ensure default date is set to today and form reset occurs on load
+     window.addEventListener("load", function () {
+     
+
+        // Ensure default values for other fields
+        document.getElementById("activityForm").reset();
+
+        // Set default values for form fields
+        // Set default date to today (YYYY-MM-DD)
+        const today = new Date().toISOString().split('T')[0];
+        logDateInput.value = today;
+        calDateInput.value = today;
+
+        workoutSelect.value = "None";
+        workoutDurationInput.style.display = "none"; // Hide workout duration
+        workoutDurationInput.value = 0; // Set default workout duration to 0
+        stepsInput.value = 0; // Set default steps to 0
+        sleepInput.value = 0; // Set default sleep hours to 0
+    });
+
+    // Function to toggle the visibility of the workout duration input
+    function toggleWorkoutDuration() {
+        if (workoutSelect.value === "None" || workoutSelect.value === "") {
+        workoutDurationLabel.style.display = "none";
+        workoutDurationInput.style.display = "none";
+        workoutDurationInput.value = 0; // Reset to 0 when hidden
+        } else {
+        workoutDurationLabel.style.display = "block";
+        workoutDurationInput.style.display = "block";
+        }
+    }
+
+    // Event listener for when the workout plan changes
+    workoutSelect.addEventListener("change", toggleWorkoutDuration);
+
+    // Initial call to set the correct visibility on page load
+    toggleWorkoutDuration();
+
+
+
+
+
+    document.getElementById("activityForm").addEventListener("submit", async function (event) {
+        event.preventDefault();
+        const logDate = document.getElementById("logDate").value;
+        const steps = document.getElementById("steps").value;
+        const workout = document.getElementById("workout").value;
+        const workoutDuration = document.getElementById("workoutDuration").value;
+        const sleep = document.getElementById("sleep").value;
+
+        const username = sessionStorage.getItem('username');
+        try {
+            const response = await fetch('/log-activity', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username, logDate, steps, workout, workoutDuration, sleep }),
+            });
+            if (!response.ok) throw new Error('Error logging activity');
+            const data = await response.json();
+            alert('Activity logged successfully');
+            location.reload(); // Refresh the page to show the updated log
+        } catch (error) {
+            console.error('Error logging activity:', error);
+            alert('Failed to log activity.');
+        }
+    });
+
+    document.addEventListener('DOMContentLoaded', async function() {
+        const username = sessionStorage.getItem('username'); // Assuming the username is stored in sessionStorage
+        
+        async function fetchLog(date) {
+            try {
+                const response = await fetch(`/get-daily-log?username=${username}&date=${date}`);
+                const data = await response.json();
+        
+                const activitySummary = document.getElementById("activitySummary");
+        
+                // Check if the log was successfully fetched
+                if (data.success && data.log) {
+                    const log = data.log;
+        
+                    // Get today's date in YYYY-MM-DD format
+                    const today = new Date().toISOString().split('T')[0];
+        
+                    // Set the log header based on whether the date is today
+                    const logHeader = (date === today) ? "Today's Activity Log" : `Activity Log for ${date}`;
+        
+                    activitySummary.innerHTML = `
+                        <h3>${logHeader}</h3>
+                        <p><strong>Steps Walked:</strong> ${log.steps}</p>
+                        <p><strong>Workout Plan:</strong> ${log.workout}</p>
+                        <p><strong>Workout Duration:</strong> ${log.workoutDuration} minutes</p>
+                        <p><strong>Sleep Hours:</strong> ${log.sleepHours}</p>
+                    `;
+                } else {
+                    activitySummary.innerHTML = "<h3>No active daily log for this date.</h3>";
+                }
+            } catch (error) {
+                console.error('Error fetching daily log:', error);
+                const activitySummary = document.getElementById("activitySummary");
+                activitySummary.innerHTML = "<h3>Error loading log.</h3>";
+            }
+        }
+        
+
+        // Fetch today's log by default when the page loads
+        const today = new Date().toISOString().split('T')[0]; // Current date in YYYY-MM-DD format
+        await fetchLog(today);
+
+        // Event listener for date selection
+        const calendarInput = document.getElementById('calendar');
+        calendarInput.addEventListener('change', function() {
+            const selectedDate = calendarInput.value;
+
+            if (selectedDate) {
+                // Call the function to fetch and display the log for the selected date
+                fetchLog(selectedDate);
+            } else {
+                // If no date is selected, show today's log by default
+                fetchLog(today);
+            }
+        });
+    });
+
+    
+    document.getElementById('accountIcon').addEventListener('click', function (event) {
+        var menu = document.getElementById('accountMenu');
+        // Prevent click event from propagating to window (which closes the dropdown)
+        event.stopPropagation();
+        
+        // Toggle the display of the dropdown menu
+        if (menu.style.display === "block") {
+            menu.style.display = "none";
+        } else {
+            menu.style.display = "block";
+        }
+    });
+    
+    // Close the dropdown if the user clicks outside of it
+    window.addEventListener('click', function (event) {
+        var dropdown = document.getElementById('accountMenu');
+        var button = document.getElementById('accountIcon');
+        // If the click target is not the button or dropdown, hide the dropdown
+        if (!button.contains(event.target) && !dropdown.contains(event.target)) {
+            dropdown.style.display = "none";
+        }
+    });
+    
+
+    window.addEventListener('load', function () {
+        const today = new Date().toISOString().split('T')[0]; // Get today's date in YYYY-MM-DD format
+        document.getElementById("logDate").max = today; // Set the max date to today
+    });
+
+    window.addEventListener('load', function () {
+        const today = new Date().toISOString().split('T')[0]; // Get today's date in YYYY-MM-DD format
+        document.getElementById("calendar").max = today; // Set the max date to today
+
+         // Array of logged dates (this can come from the server or database)
+    const loggedDates = ['2024-11-25', '2024-11-28', '2024-11-30']; // Example logged dates
+
+    // Function to highlight logged dates
+    function highlightLoggedDates() {
+        const calendar = document.getElementById('calendar');
+        const calendarValue = calendar.value; // Get the selected date value
+        if (calendarValue) {
+            // Check if the selected date is a logged day
+            if (loggedDates.includes(calendarValue)) {
+                alert("This day is logged.");
+            }
+        }
+
+        // Loop through each logged date and apply a custom style
+        loggedDates.forEach(date => {
+            const dateElement = document.querySelector(`input[type="date"][value="${date}"]`);
+            if (dateElement) {
+                dateElement.classList.add("logged-day"); // Add a CSS class to highlight the logged day
+            }
+        });
+    }
+
+    // Call the function to highlight logged days
+    highlightLoggedDates();
+    });
+    
+ 
+</script>
+
+</body>
+</html>
