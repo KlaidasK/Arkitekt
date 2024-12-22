@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign In</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="login-body">
+    <div class="login-container">
+        <h3>Sign In</h3>
+        <form id="signinForm">
+            <label for="name">Username:</label>
+            <input type="text" id="name" required>
+
+            <label for="password">Password:</label>
+            <input type="password" id="password" required>
+
+            <button type="submit">Sign In</button>
+        </form>
+    </div>
+    <script>
+        document.getElementById("signinForm").addEventListener("submit", async function (event) {
+            event.preventDefault(); // Prevent default form submission
+    
+            const formData = {
+                username: document.getElementById("name").value,
+                password: document.getElementById("password").value,
+            };
+    
+            try {
+                const response = await fetch('/signin', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(formData),
+                });
+    
+                const result = await response.json();
+    
+                if (response.ok) {
+                    alert('Sign-in successful!');
+                    // Store the username in sessionStorage if login is successful
+                    sessionStorage.setItem('username', formData.username); // Corrected here
+                    window.location.href = 'activity.html'; // Redirect to activity page
+                } else {
+                    alert('Error: ' + result.error);
+                }
+            } catch (error) {
+                console.error('Error during sign-in:', error);
+                alert('An error occurred. Please try again later.');
+            }
+        });
+    </script>
+</body>
+</html>

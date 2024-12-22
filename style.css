@@ -1,0 +1,351 @@
+/* Global Styles */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+/* Index Page */
+.index-page-body {
+    font-family: "Times New Roman", Georgia, serif;
+}
+
+h1 {
+    font-family: "Playfair Display", serif;
+    letter-spacing: 2px;
+    font-size: 25px;
+}
+
+ul {
+    font-size: 18px;
+}
+
+.top-bar {
+    font-size: 20px;
+    font-weight: bold;
+    letter-spacing: 2px;
+}
+
+.image-container img {
+    max-width: 45%; /* Images take up no more than 45% of the container's width */
+    height: 400px; /* Maintain aspect ratio */
+    object-fit: cover; /* Ensure proper fit */
+    border-radius: 10px;
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+}
+
+.custom-image {
+    width: 100vw; /* Ensures the image stretches across the entire viewport width */
+    height: 100%; /* Maintains aspect ratio */
+    max-height: 700px; /* Optional: Limits the height */
+    object-fit: cover; /* Ensures the image fills its container */
+    border-radius: 0; /* Removes rounded corners */
+    box-shadow: none; /* Removes shadow for a cleaner, full-width look */
+}
+
+.button-container button {
+    padding: 12px 20px;
+    margin: 5px 0;
+    border: none;
+    
+    color: white;
+    font-weight: bold;
+    font-size: 16px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+
+
+.header-text {
+    padding-left: 20px; /* Adjust this value to control how far the text is from the left edge */
+    padding-right: 20px; /* Optional: adds some padding to the right if needed */
+    position: relative;
+    z-index: 2; /* Ensures the text is visible on top of the image */
+}
+
+.full-screen {
+    display: flex; /* Enables flexbox layout */
+    justify-content: center; /* Centers horizontally */
+    align-items: center; /* Centers vertically */
+    height: 70vh; /* Makes the container full height of the viewport */
+    text-align: center; /* Optional: Centers text within the content box */
+}
+
+.center-content {
+    max-width: 600px; /* Optional: Restricts the width of the text for better readability */
+    padding: 20px; /* Optional: Adds padding around the content */
+    font-size: 19px;
+}
+
+.features-container {
+    display: flex; /* Enables flexbox layout */
+    flex-direction: column; /* Ensures items stack vertically */
+    align-items: center; /* Centers items horizontally */
+    justify-content: left; /* Centers items vertically */
+    height: 100%; /* Fills the height of the parent container */
+    text-align: left; /* Centers text in the container */
+}
+
+.features-list {
+    list-style: none; /* Removes default bullets */
+    padding: 0; /* Removes padding */
+    margin: 0; /* Removes margin */
+}
+
+.features-list li {
+    font-size: 1.2rem; /* Adjusts font size for readability */
+    margin: 15px 0; /* Adds spacing between items */
+    padding-left: 30px; /* Adds space for icons */
+    position: relative; /* Needed for icon positioning */
+    line-height: 1.6; /* Improves readability */
+}
+
+.features-list li i {
+    position: absolute; /* Positions the icon */
+    left: -30px; /* Adjusts icon alignment */
+    color: #28a745; /* Green color for the icons */
+    font-size: 1.4rem; /* Adjusts icon size */
+}
+
+/* Register Page */
+.register-page-body {
+    font-family: Arial, sans-serif;
+    background: url('assets/pic5.jpg') no-repeat center center fixed; /* Add the image */
+    background-size: cover; /* Ensure the image covers the entire background */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    
+}
+
+.container {
+    width: 90%;
+    max-width: 450px;
+    margin: 20px auto;
+    background: rgba(255, 255, 255, 0.9);
+    padding: 40px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    background: white;
+}
+
+
+form label {
+    display: block;
+    margin: 10px 0 5px;
+}
+
+form input, form select {
+    width: 100%;
+    padding: 15px;
+    margin-bottom: 15px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 16px;
+}
+
+form button {
+    width: 100%;
+    padding: 15px;
+    background-color: #1f933a;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+form button:hover {
+    background-color: #218838;
+}
+
+.success-message {
+    display: none;
+    padding: 10px;
+    margin-top: 10px;
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+    border-radius: 4px;
+}
+
+/* Media Queries */
+@media (max-width: 600px) {
+    .container {
+        width: 95%;
+        padding: 15px;
+    }
+
+    h1 {
+        font-size: 20px;
+    }
+
+    form input, form select {
+        padding: 8px;
+        font-size: 14px;
+    }
+
+    form button {
+        font-size: 14px;
+    }
+}
+
+h2 {
+    margin-bottom: 20px;
+    font-family: "Playfair Display", serif;
+    text-align: center;
+}
+
+form label {
+    display: block;
+    margin: 10px 0 5px;
+}
+
+form input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+
+/*Login page */
+
+.login-body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background: url('assets/pic5.jpg') no-repeat center center fixed; /* Add the image */
+    background-size: cover; /* Ensure the image covers the entire background */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+.login-container {
+    text-align: center;
+    background: white;
+    padding: 40px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    max-width: 400px;
+    width: 100%;
+}
+h3 {
+    margin-bottom: 20px;
+    font-size: 25px;
+    font-family: "Playfair Display", serif;
+}
+form label {
+    display: block;
+    text-align: left;
+    margin: 10px 0 5px;
+}
+form input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+form button {
+    width: 100%;
+    padding: 10px;
+    background-color: #1dab3e;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+}
+
+/*Account settings*/
+
+/* Add space between the header and form fields */
+h2 {
+    margin-bottom: 20px;
+}
+
+/* Add some margin to the paragraph below the header */
+p {
+    margin-bottom: 20px;
+}
+
+/* Ensure the buttons are side by side */
+.button-container {
+    display: flex;
+    gap: 10px; /* Adds space between the buttons */
+    margin-top: 20px;
+}
+
+/* Style the individual buttons */
+button {
+    padding: 10px 20px;
+    border: none;
+    
+    color: white;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.saveButton{
+    background-color: #3ca841;
+    
+}
+
+.saveButton:hover {
+    background-color: #15832e;
+}
+
+.editButton{
+    background-color: #3ca841;
+}
+
+.editButton:hover {
+    background-color: #3ca841;
+}
+
+/* Success and error message styling */
+.success-message, .error-message {
+    margin-top: 20px;
+    padding: 10px;
+    border-radius: 5px;
+    text-align: center;
+}
+
+.success-message {
+    background-color: #4CAF50;
+    color: white;
+}
+
+.error-message {
+    background-color: #f44336;
+    color: white;
+}
+
+/* Style for Delete Account Button */
+.delete-btn {
+    background-color: red;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 5px;
+    margin-top: 10px;
+}
+
+.delete-btn:hover {
+    background-color: darkred;
+}

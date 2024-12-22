@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Account</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="register-page-body">
+    <div class="container">
+        <h2>Your Account</h2>
+        <p>Here you can view and update your personal information</p>
+
+        <form id="accountForm">
+            <label for="username">Username:</label>
+            <input type="text" id="username" readonly>
+
+            <label for="dob">Date of Birth:</label>
+            <input type="date" id="dob" readonly>
+
+            <label for="weight">Weight (kg):</label>
+            <input type="number" id="weight" readonly>
+
+            <label for="height">Height (cm):</label>
+            <input type="number" id="height" readonly>
+
+            <label for="gender">Gender:</label>
+            <select id="gender" disabled>
+                <option value="Female">Female</option>
+                <option value="Male">Male</option>
+            </select>
+
+            <label for="goal">Health Goals:</label>
+            <select id="goal" name="goal" required disabled>
+                <option value="" disabled selected>Select your health goal</option>
+                <option value="Lose weight">Lose weight</option>
+                <option value="Gain weight">Gain weight</option>
+                <option value="Increase step count">Increase step count</option>
+                <option value="Track daily calories">Track daily calories</option>
+                <option value="Increase fitness (workout repetition)">Increase fitness (workout repetition)</option>
+            </select>
+
+            <!-- New Password Fields -->
+            <label for="newPassword">New Password:</label>
+            <input type="password" id="newPassword" placeholder="Enter a new password" oninput="showConfirmPasswordField()">
+
+            <!-- Confirm Old Password Field (Initially Hidden) -->
+            <div id="confirmOldPasswordContainer" style="display: none;">
+                <label for="confirmOldPassword">Confirm Old Password:</label>
+                <input type="password" id="confirmOldPassword" placeholder="Confirm your old password">
+            </div>
+
+            <!-- Button container -->
+            <div class="button-container">
+                <button type="button" onclick="goBack()">Go back</button>
+                <button type="button" id="editButton" onclick="editProfile()">Edit Profile</button>
+                <button type="submit" id="saveButton" style="display: none;">Save Changes</button>
+                <!-- Add this after the "Save Changes" button -->
+                <button type="button" id="deleteButton" class="delete-btn" onclick="deleteAccount()">Delete Account</button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        // Go back function
+        function goBack() {
+            window.history.back(); // Goes back to the previous page
+        }
+
+        // Fetch the user's profile data when the page loads
+        document.addEventListener("DOMContentLoaded", async function () {
+            const username = sessionStorage.getItem('username'); // Get username from sessionStorage or token
+
+            if (!username) {
+                alert("You need to be logged in to access your account.");
+                window.location.href = 'login.html'; // Redirect to login if not logged in
+                return;
+            }
+
+            try {
+                const response = await fetch(`/get-user-profile?username=${username}`);
+                if (!response.ok) {
+                    throw new Error('Error fetching user data: ' + response.statusText);
+                }
+                const userData = await response.json();
+
+                if (userData.error) {
+                    alert('Error fetching user data: ' + userData.error);
+                    return;
+                }
+
+                // Display user details in the respective fields
+                document.getElementById("username").value = userData.username;
+                document.getElementById("weight").value = userData.weight;
+                document.getElementById("height").value = userData.height;
+                document.getElementById("gender").value = userData.gender;
+                document.getElementById("dob").value = formatDate(userData.dob);
+                document.getElementById("goal").value = userData.goal;
+            } catch (error) {
+                console.error('Error loading user data:', error);
+                alert('Error loading user data.');
+            }
+        });
+
+        // Function to format the date in YYYY-MM-DD format
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        }
+
+        // Function to enable editing
+        function editProfile() {
+            document.getElementById("weight").removeAttribute("readonly");
+            document.getElementById("height").removeAttribute("readonly");
+            document.getElementById("gender").removeAttribute("disabled");
+            document.getElementById("goal").removeAttribute("disabled");
+
+            document.getElementById("editButton").style.display = "none";
+            document.getElementById("saveButton").style.display = "inline-block";
+        }
+
+        // Show the "Confirm Old Password" field if a new password is entered
+        function showConfirmPasswordField() {
+            const newPassword = document.getElementById("newPassword").value;
+            const confirmPasswordContainer = document.getElementById("confirmOldPasswordContainer");
+            if (newPassword.length > 0) {
+                confirmPasswordContainer.style.display = "block";
+            } else {
+                confirmPasswordContainer.style.display = "none";
+            }
+        }
+
+        document.getElementById('accountForm').addEventListener('submit', async function (event) {
+            event.preventDefault(); // Prevent the form from submitting normally
+        
+            const username = document.getElementById('username').value;
+            const dob = document.getElementById('dob').value;
+            const weight = document.getElementById('weight').value;
+            const height = document.getElementById('height').value;
+            const gender = document.getElementById('gender').value;
+            const goal = document.getElementById('goal').value;
+            const newPassword = document.getElementById('newPassword').value;
+            const confirmOldPassword = document.getElementById('confirmOldPassword').value;
+        
+            // If a new password is entered, check if the old password matches
+            if (newPassword.length > 0) {
+                const isOldPasswordCorrect = await verifyOldPassword(username, confirmOldPassword);
+        
+                if (!isOldPasswordCorrect) {
+                    alert('The old password does not match. Please try again.');
+                    return; // Prevent the form from submitting
+                }
+            }
+        
+            // Prepare the updated data to send to the server
+            const updatedData = {
+                username,
+                newDob: dob,
+                weight,
+                height,
+                gender,
+                goal,
+                newPassword: newPassword.length > 0 ? newPassword : null // Only send the new password if it's provided
+            };
+        
+            try {
+                const response = await fetch('/update-user-profile', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(updatedData)
+                });
+        
+                const data = await response.json();
+                if (data.success) {
+                    alert('Profile updated successfully!');
+                } else {
+                    alert('Error: ' + data.error);
+                }
+            } catch (error) {
+                console.error('Error updating profile:', error);
+                alert('An error occurred while updating your profile.');
+            }
+        });
+        
+
+        // Function to verify the old password entered by the user
+        async function verifyOldPassword(username, oldPassword) {
+            try {
+                // Send the old password to the server to verify it against the stored password hash
+                const response = await fetch(`/verify-old-password?username=${username}&password=${oldPassword}`);
+
+                const data = await response.json();
+
+                if (data.success) {
+                    return true;  // Old password matches
+                } else {
+                    return false;  // Old password doesn't match
+                }
+            } catch (error) {
+                console.error('Error verifying old password:', error);
+                return false;
+            }
+        }
+
+
+       // Remove the username parameter from deleteAccount function
+async function deleteAccount() {
+    const confirmDelete = confirm("Are you sure you want to delete your account? This action cannot be undone.");
+
+    if (confirmDelete) {
+         const username = sessionStorage.getItem('username');
+
+        try {
+            const response = await fetch(`/delete-user-account?username=${username}`, {
+                method: 'DELETE'
+            });
+
+            const data = await response.json();
+            if (data.success) {
+                alert('Your account has been deleted.');
+                window.location.href = 'index.html'; // Redirect to login page after account deletion
+            } else {
+                alert('Error: ' + data.error);
+            }
+        } catch (error) {
+            console.error('Error deleting account:', error);
+            alert('An error occurred while deleting your account.');
+        }
+    }
+}
+
+
+
+
+
+        
+    </script>
+</body>
+</html>

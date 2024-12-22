@@ -1,0 +1,42 @@
+[
+    {
+        "image": "../assets/apple.jpg",
+        "name": "apple"
+    },
+    {
+        "image": "../assets/atom.jpg",
+        "name": "atom"
+    },
+    {
+        "image": "../assets/brain.jpg",
+        "name": "brain"
+    },
+    {
+        "image": "../assets/dish.jpg",
+        "name": "dish"
+    },
+    {
+        "image": "../assets/dna.jpg",
+        "name": "dna"
+    },
+    {
+        "image": "../assets/hazard.jpg",
+        "name": "hazard"
+    },
+    {
+        "image": "../assets/lightbulp.jpg",
+        "name": "lightbulp"
+    },
+    {
+        "image": "../assets/planet.jpg",
+        "name": "planet"
+    },
+    {
+        "image": "../assets/syringe.jpg",
+        "name": "syringe"
+    },
+    {
+        "image": "../assets/telescope.jpg",
+        "name": "telescope"
+    }
+]
