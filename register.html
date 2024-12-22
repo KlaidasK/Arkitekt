@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Registration</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="register-page-body">
+    <div class="container">
+        <h2>Register</h2>
+        <form id="registrationForm">
+            <label for="name">Username:</label>
+            <input type="text" id="name" placeholder="Enter your name" required>
+
+            <label for="dob">Date of Birth:</label>
+            <input type="date" id="dob" required>
+
+            <label for="password">Password:</label>
+            <input type="password" id="password" placeholder="Enter your password" required>
+
+            <label for="height">Height (cm):</label>
+            <input type="number" id="height" placeholder="Enter your height" step="1" min="60" max="250" value="170" onkeypress="return isNumberKey(event)" required>
+
+            <label for="weight">Weight (kg):</label>
+            <input type="number" id="weight" placeholder="Enter your weight" min="20" max="300" step="0.1" value="60.0" onkeypress="return isNumberKey(event)" required>
+
+            <!-- Gender Dropdown -->
+            <label for="gender">Gender:</label>
+            <select id="gender" name="gender" required>
+                <option value="" disabled selected>Select your gender</option>
+                <option value="Female">Female</option>
+                <option value="Male">Male</option>
+            </select>
+
+            <label for="goal">Health Goals:</label>
+            <select id="goal" name="goal" required>
+                <option value="" disabled selected>Select your health goal</option>
+                <option value="Lose weight">Lose weight</option>
+                <option value="Gain weight">Gain weight</option>
+                <option value="Increase step count">Increase step count</option>
+                <option value="Track daily calories">Track daily calories</option>
+                <option value="Increase fitness (workout repetition)">Increase fitness (workout repetition)</option>
+            </select>
+
+            <button type="submit">Register</button>
+        </form>
+
+        <div id="successMessage" class="success-message">
+            User profile saved successfully!
+        </div>
+
+        <div id="errorMessage" class="error-message" style="display: none;">
+            Username is already taken. Please choose another one.
+        </div>
+    </div>
+
+    <script>
+        // Set the max date for the Date of Birth field to today's date
+        document.addEventListener("DOMContentLoaded", function () {
+            const today = new Date();
+            const dd = String(today.getDate()).padStart(2, '0');
+            const mm = String(today.getMonth() + 1).padStart(2, '0'); // January is 0!
+            const yyyy = today.getFullYear();
+
+            const maxDate = `${yyyy}-${mm}-${dd}`;
+            document.getElementById('dob').setAttribute('max', maxDate);
+        });
+
+        // Check if username is available
+        async function checkUsernameAvailability(username) {
+            const response = await fetch(`/check-username?username=${username}`);
+            const result = await response.json();
+            return result.isTaken; // true if taken, false if available
+        }
+
+        // Handle form submission
+        document.getElementById("registrationForm").addEventListener("submit", async function(event) {
+            event.preventDefault();  // Prevent default form submission
+
+            const username = document.getElementById("name").value;
+            const password = document.getElementById("password").value;
+            const dob = document.getElementById("dob").value;
+            const height = document.getElementById("height").value;
+            const weight = document.getElementById("weight").value;
+            const gender = document.getElementById("gender").value;
+            const goal = document.getElementById("goal").value;
+
+            // Validate Height and Weight range manually
+            if (height < 1 || height > 250) {
+                alert("Height must be between 1 and 250 cm.");
+                return;
+            }
+
+            if (weight < 1 || weight > 300) {
+                alert("Weight must be between 1 and 300 kg.");
+                return;
+            }
+
+            // Check if username is already taken
+            const isUsernameTaken = await checkUsernameAvailability(username);
+
+            if (isUsernameTaken) {
+                document.getElementById("errorMessage").style.display = "block";
+                return; // Stop form submission if the username is taken
+            }
+
+            // If username is available, proceed with registration
+            const user = {
+                username,
+                password,
+                dob,
+                height,
+                weight,
+                gender,
+                goal
+            };
+
+            // Send registration data to server
+            const response = await fetch('/register', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(user)
+            });
+
+            const result = await response.json();
+            if (result.success) {
+                document.getElementById("successMessage").style.display = "block";
+                // Store the username in sessionStorage if login is successful
+                sessionStorage.setItem('username', username);
+                // Redirect after success
+                setTimeout(function() {
+                    window.location.href = 'activity.html'; // Redirect to activity page
+                }, 2000);
+            } else {
+                document.getElementById("errorMessage").innerText = result.error;
+                document.getElementById("errorMessage").style.display = "block";
+            }
+        });
+
+        function isNumberKey(evt) {
+            var charCode = (evt.which) ? evt.which : evt.keyCode;
+            // Allow only numbers or the dot symbol (.)
+            if (charCode > 31 && (charCode < 48 || charCode > 57) && charCode !== 46) {
+                return false; // Disallow non-numeric and non-dot characters
+            }
+            return true;
+        }
+    </script>
+</body>
+</html>

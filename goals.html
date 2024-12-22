@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <!-- Font Awesome (for icons) -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+
+
+    <title>Goals</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        /* Style for logged days */
+        .logged-day {
+            background-color: #4CAF50 !important; /* Green background for logged days */
+            color: white; /* Text color for better visibility */
+            font-weight: bold; /* Make it bold */
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 0;
+            background: url('assets/pic5.jpg') no-repeat center center fixed; /* Add the image */
+            background-size: cover; /* Ensure the image covers the entire background */
+        }
+        
+          /* Navbar Style */
+          .w3-bar {
+            font-family: Arial, sans-serif;
+            background-color: #ffffff;
+            padding: 30px 30px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between; /* Distribute the items between the left and right */
+            align-items: center;
+        }
+
+        .w3-bar-item {
+            padding: 30px 30px;
+            color: #333;
+            font-size: 17px; /* Uniform font size for all items */
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+        .w3-bar-item:hover {
+            background-color: #f4f4f9;
+            color: #007bff;
+        }
+
+        /* Right side: Profile icon and other links */
+        .w3-right {
+            font-size: 17px; /* Ensures the font size is consistent with other links */
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            margin-left: auto;
+        }
+        
+        .container {
+            width: 90%;
+            max-width: 600px;
+            margin: 80px auto 20px; /* Adjusted margin-top to 80px to account for the navbar height */
+            background: white;
+            padding: 20px;
+            box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+        }
+        
+        h1 {
+            text-align: center;
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+        
+        form label {
+            display: block;
+            margin: 10px 0 5px;
+        }
+        
+        form input, form select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        
+        form button {
+            width: 100%;
+            padding: 10px;
+            background-color: #28a745; /* Green background */
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        
+        form button:hover {
+            background-color: #218838; /* Darker green on hover */
+        }
+        
+        .progress-section {
+            margin-top: 20px;
+        }
+        
+        .progress-section h2 {
+            font-size: 20px;
+            margin-bottom: 15px;
+        }
+        
+        .activity-summary {
+            padding: 10px;
+            background-color: #e9f7ef;
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+        
+        .activity-summary h3 {
+            font-size: 18px;
+        }
+        
+        @media (max-width: 600px) {
+            .container {
+                width: 95%;
+                padding: 15px;
+            }
+        
+            h1 {
+                font-size: 20px;
+            }
+        
+            form input, form select {
+                padding: 8px;
+                font-size: 14px;
+            }
+        
+            form button {
+                font-size: 14px;
+            }
+        }
+        
+        /* account menu --> */
+        
+    /* Remove hover effect for dropdown */
+.account-dropdown:hover .dropdown-menu {
+    display: block; /* No longer need this */
+}
+
+/* Ensure dropdown menu is hidden by default */
+.dropdown-menu {
+    display: none;
+    position: absolute;
+    top: 100%;
+    right: 0;
+    z-index: 1000;
+    background-color: #ffffff;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
+    min-width: 200px;
+    padding: 10px 0;
+}
+
+        
+        /* Show dropdown on hover */
+        .account-dropdown:hover .dropdown-menu {
+            display: block; /* Show the menu */
+        }
+        
+        /* Dropdown item styles */
+        .dropdown-item {
+            display: flex;
+            align-items: center; /* Align text and icons */
+            padding: 12px 20px; /* Increase padding */
+            text-decoration: none;
+            color: #333;
+            font-size: 16px; /* Slightly larger font */
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .dropdown-item:last-child {
+            border-bottom: none; /* Remove border for the last item */
+        }
+        
+        /* Dropdown icon styles */
+        .dropdown-item i {
+            margin-right: 10px; /* Add space between icon and text */
+            color: #28a745; /* Icon color */
+            font-size: 18px; /* Icon size */
+        }
+        
+        /* Hover effect */
+        .dropdown-item:hover {
+            background-color: #f4f4f9; /* Light gray background */
+            color: #007bff; /* Highlight text */
+        }
+
+      
+      
+
+        
+
+    </style>
+</head>
+<body>
+<!-- Navbar -->
+<div class="w3-top">
+    <div class="w3-bar w3-white w3-padding w3-card top-bar">
+        <!-- Health Tracker link on the left side -->
+        <a href="#home" class="w3-bar-item w3-button">Health Tracker</a>
+        
+        <!-- Links aligned to the right (except Health Tracker) -->
+        <div class="w3-right">
+            <a href="activity.html" class="w3-bar-item w3-button">Daily Activities</a>
+            <a href="nutrition.html" class="w3-bar-item w3-button">Nutrition</a>
+            <a href="weight-tracking.html" class="w3-bar-item w3-button">Weight Tracking</a>
+            <a href="workout-tracking.html" class="w3-bar-item w3-button">Workout Tracking</a>
+            <a href="goals.html" class="w3-bar-item w3-button">Goals</a>
+            <a href="weekly-monthly-summary.html" class="w3-bar-item w3-button">Weekly/Monthly Summary</a>
+            <a href="progress-dashboard.html" class="w3-bar-item w3-button">Progress Dashboard</a>
+            <a href="notifications.html" class="w3-bar-item w3-button">Notifications</a>
+
+            <!-- Account dropdown for profile icon -->
+            <div class="account-dropdown">
+                <button class="w3-bar-item w3-button" id="accountIcon">
+                    <i class="fas fa-user"></i>
+                </button>
+                <div id="accountMenu" class="dropdown-menu">
+                    <a href="account.html" class="dropdown-item">
+                        <i class="fas fa-cog"></i> Account Settings
+                    </a>
+                    <a href="index.html" class="dropdown-item" id="logoutButton">
+                        <i class="fas fa-sign-out-alt"></i> Sign Out
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+    <div class="container">
+        <h1>Goals</h1>
+        <form id="GoalsForm">
+    <label for="goal">Health Goals:</label>
+    <select id="goal" name="goal" required>
+        <option value="" disabled selected>Select your health goal</option>
+        <option value="Lose weight">Lose weight</option>
+        <option value="Gain weight">Gain weight</option>
+        <option value="Increase step count">Increase step count</option>
+        <option value="Track daily calories">Track daily calories</option>
+        <option value="Increase fitness (workout repetition)">Increase fitness (workout repetition)</option>
+    </select>
+    <!-- Save button -->
+        <button type="button" id="saveButton">Save</button>
+
+       
+    </form>
+    <div id="progressSection" style="display: none; margin-top: 20px;">
+        <h2>Progress</h2>
+        <p id="progressText"></p>
+    </div>
+    </div>
+
+<script>
+
+    document.addEventListener("DOMContentLoaded", async function () {
+        const username = sessionStorage.getItem("username");
+    
+        if (!username) {
+            alert("You need to be logged in to access your account.");
+            window.location.href = "login.html";
+            return;
+        }
+    
+        const progressSection = document.getElementById("progressSection");
+        const progressText = document.getElementById("progressText");
+    
+        async function fetchUserData() {
+            try {
+                const response = await fetch(`/get-user-profile?username=${username}`);
+                if (!response.ok) throw new Error("Error fetching user data");
+                return response.json();
+            } catch (error) {
+                console.error("Error fetching user data:", error);
+                alert("Error loading user data.");
+            }
+        }
+    
+        async function fetchLatestWeight() {
+            try {
+                const response = await fetch(`/get-latest-weight?username=${username}`);
+                if (!response.ok) throw new Error("Error fetching weight data");
+                return response.json();
+            } catch (error) {
+                console.error("Error fetching weight data:", error);
+                alert("Error loading weight data.");
+            }
+        }
+    
+        async function displayProgress(goal) {
+            // Check if goal is weight-related
+            if (goal === "Lose weight" || goal === "Gain weight") {
+                const userData = await fetchUserData();
+                const latestWeightData = await fetchLatestWeight();
+        
+                if (userData && latestWeightData) {
+                    const initialWeight = userData.weight;
+                    const latestWeight = latestWeightData.weight;
+                    let progressMessage = "";
+        
+                    if (goal === "Lose weight") {
+                        const progress = initialWeight - latestWeight;
+                        progressMessage = `Initial Weight: ${initialWeight}kg, Latest Weight: ${latestWeight}kg, Progress: ${
+                            progress > 0 ? `${progress}kg lost` : "No progress yet"
+                        }.`;
+                    } else if (goal === "Gain weight") {
+                        const progress = latestWeight - initialWeight;
+                        progressMessage = `Initial Weight: ${initialWeight}kg, Latest Weight: ${latestWeight}kg, Progress: ${
+                            progress > 0 ? `${progress}kg gained` : "No progress yet"
+                        }.`;
+                    }
+        
+                    if (progressMessage) {
+                        progressSection.style.display = "block";
+                        progressText.textContent = progressMessage;
+                    } else {
+                        progressSection.style.display = "none";
+                    }
+                } else {
+                    progressSection.style.display = "none";
+                }
+            }
+            
+            // Check if goal is to increase step count
+            else if (goal === "Increase step count") {
+                try {
+                    const response = await fetch(`/get-step-progress?username=${username}`);
+        
+                    if (!response.ok) {
+                        throw new Error('Failed to fetch step progress');
+                    }
+        
+                    const data = await response.json();
+        
+                    if (data.success) {
+                        const { initialSteps, latestSteps, progress } = data;
+        
+                        // Show the step progress message
+                        progressSection.style.display = "block";
+                        progressText.textContent = `Initial Steps: ${initialSteps}, Latest Steps: ${latestSteps}, Progress: ${
+                            progress > 0 ? `${progress} steps increased` : `${Math.abs(progress)} steps decreased`
+                        }.`;
+                    } else {
+                        progressSection.style.display = "none";
+                        console.error("No step data found:", data.error || data.message);
+                    }
+                } catch (error) {
+                    console.error("Error displaying step progress:", error);
+                    progressSection.style.display = "none";
+                }
+            }
+        
+                    // Check if goal is related to calorie intake
+            else if (goal === "Track daily calories") {
+                try {
+                    const response = await fetch(`/get-calories-intake?username=${username}`);
+
+                    if (!response.ok) {
+                        throw new Error('Failed to fetch calorie intake data');
+                    }
+
+                    const data = await response.json();
+
+                    if (data.success) {
+                        const { calorieGoal, initialCalories, latestCalories, progress } = data;
+
+                        // Prepare the progress message
+                        let progressMessage = `Initial Calories: ${initialCalories} kcal, Latest Calories: ${latestCalories} kcal, Progress: ${
+                            progress > 0 ? `${progress} kcal` : `${Math.abs(progress)} calorie progress`
+                        }.`;
+
+                        // Display the progress message
+                        progressSection.style.display = "block";
+                        progressText.textContent = progressMessage;
+                    } else {
+                        progressSection.style.display = "none";
+                        console.error("No calorie data found:", data.error || data.message);
+                    }
+                } catch (error) {
+                    console.error("Error displaying calorie progress:", error);
+                    progressSection.style.display = "none";
+                }
+            }
+
+            else if (goal === "Increase fitness (workout repetition)") {
+                try {
+                    const response = await fetch(`/get-workout-progress?username=${username}`);
+            
+                    if (!response.ok) {
+                        throw new Error('Failed to fetch workout progress data');
+                    }
+            
+                    const data = await response.json();
+            
+                    if (data.success) {
+                        const { averageWorkoutsPerWeek, totalCompletedWorkouts, startDate, endDate } = data;
+            
+                        // Prepare the progress message
+                        let progressMessage = `Total completed Workouts: ${totalCompletedWorkouts}, Completed workouts per Week: ${averageWorkoutsPerWeek}, `;
+            
+                        // Display the progress message
+                        progressSection.style.display = "block";
+                        progressText.textContent = progressMessage;
+                    } else {
+                        progressSection.style.display = "none";
+                        console.error("No workout data found:", data.error || data.message);
+                    }
+                } catch (error) {
+                    console.error("Error displaying workout progress:", error);
+                    progressSection.style.display = "none";
+                }
+            }
+            
+
+        
+            // Hide the progress section if no valid goal
+            else {
+                progressSection.style.display = "none";
+            }
+        }
+        
+        
+
+  
+    
+        // Populate form with user data
+        const userData = await fetchUserData();
+        if (userData) {
+            document.getElementById("goal").value = userData.goal || "";
+            await displayProgress(userData.goal);
+        }
+    
+        // Save button click event
+        document.getElementById("saveButton").addEventListener("click", async function () {
+            const selectedGoal = document.getElementById("goal").value;
+    
+            if (!selectedGoal) {
+                alert("Please select a goal before saving.");
+                return;
+            }
+    
+            try {
+                const response = await fetch("/update-user-profile", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ username, goal: selectedGoal }),
+                });
+    
+                const data = await response.json();
+    
+                if (data.success) {
+                    alert("Goal updated successfully!");
+                    await displayProgress(selectedGoal);
+                } else {
+                    alert("Error: " + data.error);
+                }
+            } catch (error) {
+                console.error("Error updating goal:", error);
+                alert("An error occurred while updating your goal.");
+            }
+        });
+    });
+
+    document.getElementById('accountIcon').addEventListener('click', function (event) {
+        var menu = document.getElementById('accountMenu');
+        // Prevent click event from propagating to window (which closes the dropdown)
+        event.stopPropagation();
+        
+        // Toggle the display of the dropdown menu
+        if (menu.style.display === "block") {
+            menu.style.display = "none";
+        } else {
+            menu.style.display = "block";
+        }
+    });
+    
+    // Close the dropdown if the user clicks outside of it
+    window.addEventListener('click', function (event) {
+        var dropdown = document.getElementById('accountMenu');
+        var button = document.getElementById('accountIcon');
+        // If the click target is not the button or dropdown, hide the dropdown
+        if (!button.contains(event.target) && !dropdown.contains(event.target)) {
+            dropdown.style.display = "none";
+        }
+    });
+
+    
+
+
+
+</script>
+
+
+</body>

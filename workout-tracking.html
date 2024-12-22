@@ -1,0 +1,917 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <!-- Font Awesome (for icons) -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+
+
+
+
+
+    <title>Workouts</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+ 
+        
+        /* Style for logged days */
+        .logged-day {
+            background-color: #4CAF50 !important; /* Green background for logged days */
+            color: white; /* Text color for better visibility */
+            font-weight: bold; /* Make it bold */
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 0;
+            background: url('assets/pic5.jpg') no-repeat center center fixed; /* Add the image */
+            background-size: cover; /* Ensure the image covers the entire background */
+        }
+        
+          /* Navbar Style */
+          .w3-bar {
+            font-family: Arial, sans-serif;
+            background-color: #ffffff;
+            padding: 30px 30px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between; /* Distribute the items between the left and right */
+            align-items: center;
+        }
+
+        .w3-bar-item {
+            padding: 30px 30px;
+            color: #333;
+            font-size: 17px; /* Uniform font size for all items */
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+        .w3-bar-item:hover {
+            background-color: #f4f4f9;
+            color: #007bff;
+        }
+
+        /* Right side: Profile icon and other links */
+        .w3-right {
+            font-size: 17px; /* Ensures the font size is consistent with other links */
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            margin-left: auto;
+        }
+        
+        .container {
+            width: 90%;
+            max-width: 600px;
+            margin: 80px auto 20px; /* Adjusted margin-top to 80px to account for the navbar height */
+            background: white;
+            padding: 20px;
+            box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+        }
+        
+        h1 {
+            text-align: center;
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+        
+        form label {
+            display: block;
+            margin: 10px 0 5px;
+        }
+        
+        form input, form select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        
+        button {
+            width: 200px;
+            padding: 10px;
+            background-color: #28a745; /* Green background */
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-bottom: 15px;
+        }
+
+
+        
+        button:hover {
+            background-color: #218838; /* Darker green on hover */
+        }
+        
+        button.create-workout-btn {
+            display: flex;
+            width: 100%;
+            justify-content: center; /* Centers the content horizontally */
+            align-items: center; /* Centers the content vertically */
+            margin: 0 auto; /* Center the button itself horizontally */
+            padding: 10px 20px; /* Add padding to the button for a better look */
+            background-color: #28a745; /* Green background */
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+            text-align: center; /* Ensure text is centered within the button */
+            margin-bottom: 10px;
+        }
+        
+        .createWorkoutBtn:hover {
+            background-color: #218838; /* Darker green on hover */
+        }
+        
+        /* account menu --> */
+        
+    /* Remove hover effect for dropdown */
+        .account-dropdown:hover .dropdown-menu {
+            display: block; /* No longer need this */
+        }
+
+        /* Ensure dropdown menu is hidden by default */
+        .dropdown-menu {
+            display: none;
+            position: absolute;
+            top: 100%;
+            right: 0;
+            z-index: 1000;
+            background-color: #ffffff;
+            box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+            min-width: 200px;
+            padding: 10px 0;
+        }
+
+        
+        /* Show dropdown on hover */
+        .account-dropdown:hover .dropdown-menu {
+            display: block; /* Show the menu */
+        }
+        
+        /* Dropdown item styles */
+        .dropdown-item {
+            display: flex;
+            align-items: center; /* Align text and icons */
+            padding: 12px 20px; /* Increase padding */
+            text-decoration: none;
+            color: #333;
+            font-size: 16px; /* Slightly larger font */
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .dropdown-item:last-child {
+            border-bottom: none; /* Remove border for the last item */
+        }
+        
+        /* Dropdown icon styles */
+        .dropdown-item i {
+            margin-right: 10px; /* Add space between icon and text */
+            color: #28a745; /* Icon color */
+            font-size: 18px; /* Icon size */
+        }
+        
+        /* Hover effect */
+        .dropdown-item:hover {
+            background-color: #f4f4f9; /* Light gray background */
+            color: #007bff; /* Highlight text */
+        }
+
+        .modal {
+            position: fixed;
+            display: none;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+        
+        .modal-content {
+            position: relative;
+            bottom: 20%;
+            background-color: #fefefe;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 50%;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+            border-radius: 5px;
+        }
+        
+        /* To ensure form fields span rows inside the modal */
+        .modal-content form {
+            display: flex;
+            flex-direction: column; /* Each form field takes a new row */
+            gap: 20px; /* Space between fields */
+        }
+        
+        .modal-content input,
+        .modal-content label {
+            width: 100%; /* Ensure the fields span the full width of the modal */
+        }
+        
+        /* Optional: Styling for form labels */
+        .modal-content label {
+            margin-bottom: 8px;
+            font-size: 16px;
+        }
+        
+        /* Optional: Styling for inputs to ensure uniformity */
+        .modal-content input {
+            padding: 10px;
+            font-size: 16px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+        }
+        
+        /* Specific styling for the exercise and duration fields if needed */
+        .modal-content .exercise, 
+        .modal-content .duration {
+            width: 100%;
+            display: block;
+        }
+        
+        
+    
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+    
+        .close:hover,
+        .close:focus {
+            color: #000;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .button-container{
+            display: flex;
+            gap: 10px;  /* Adds a 10px space between the buttons */
+            margin-top: 15px;
+        }
+
+        
+        .workout-item {
+            display: flex;                /* Use flexbox for alignment */
+            flex-direction: row;          /* Align items in a row */
+            align-items: center;          /* Vertically center the items */
+            margin: 5px 0;                /* Add some space between items */
+            vertical-align: middle;
+        }
+        
+        .workout-item input[type="checkbox"] {
+            margin-right: 10px;           /* Optional spacing on the right of checkbox */
+            vertical-align: middle;
+        }
+        
+        .workout-list {
+            display: flex;                /* Use flexbox for the container of all workouts */
+            flex-direction: column;       /* Align the items in a column */
+            padding: 10px;                /* Optional padding for the container */
+            vertical-align: middle;
+        }
+        
+        .workout-item label {
+            margin-left: 10px;            /* Add margin to the left of the label */
+            flex-grow: 1;                 /* Allow the label to take up available space */
+            vertical-align: middle;
+        }
+        
+       /* Target the label using the 'for' attribute */
+       /* Assign a class to the label for more specific styling */
+        label.createLabel {
+            margin-bottom: 8px; /* Add some space between label and input */
+            font-size: 16px; /* Adjust font size for readability */
+            text-align: center; /* Center the text of the label */
+        }
+
+
+      
+        input[type="date"] {
+            width: 100%; /* Make the input take full width */
+            padding: 10px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+            font-size: 16px;
+            margin-bottom: 15px; /* Add space below the input */
+            box-sizing: border-box; /* Ensure padding doesn't overflow input box */
+        }
+        
+        
+        
+        
+
+
+        
+
+
+    </style>
+</head>
+<body>
+
+<!-- Navbar -->
+<div class="w3-top">
+    <div class="w3-bar w3-white w3-padding w3-card top-bar">
+        <!-- Health Tracker link on the left side -->
+        <a href="#home" class="w3-bar-item w3-button">Health Tracker</a>
+        
+        <!-- Links aligned to the right (except Health Tracker) -->
+        <div class="w3-right">
+            <a href="activity.html" class="w3-bar-item w3-button">Daily Activities</a>
+            <a href="nutrition.html" class="w3-bar-item w3-button">Nutrition</a>
+            <a href="weight-tracking.html" class="w3-bar-item w3-button">Weight Tracking</a>
+            <a href="workout-tracking.html" class="w3-bar-item w3-button">Workout Tracking</a>
+            <a href="goals.html" class="w3-bar-item w3-button">Goals</a>
+            <a href="weekly-monthly-summary.html" class="w3-bar-item w3-button">Weekly/Monthly Summary</a>
+            <a href="progress-dashboard.html" class="w3-bar-item w3-button">Progress Dashboard</a>
+            <a href="notifications.html" class="w3-bar-item w3-button">Notifications</a>
+
+            <!-- Account dropdown for profile icon -->
+            <div class="account-dropdown">
+                <button class="w3-bar-item w3-button" id="accountIcon" aria-label="Profile">
+                    <i class="fas fa-user"></i>
+                </button>
+                <div id="accountMenu" class="dropdown-menu">
+                    <a href="account.html" class="dropdown-item">
+                        <i class="fas fa-cog"></i> Account Settings
+                    </a>
+                    <a href="index.html" class="dropdown-item" id="logoutButton">
+                        <i class="fas fa-sign-out-alt"></i> Sign Out
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <h1>Workouts</h1>
+    <!-- Button to open the modal to create workout plan -->
+    <div class="button-container">
+    <button class="create-workout-btn" id="createWorkoutBtn">Create Workout Plan</button>
+    </div>
+    <label for="logDate" class="createLabel">Date:</label>
+    <input type="date" id="logDate">
+    <!-- Container for workout checklist -->
+    <div id="workoutChecklistContainer">
+        <h3>Logged Workouts</h3>
+        <div id="workoutChecklist"></div>
+    </div>
+
+    <!-- Submit button for form -->
+    <button type="button" id="Logcheck">Log</button>
+
+
+
+
+
+<!-- Modal for creating workout plan -->
+<form id="workoutForm">
+<div id="createWorkoutModal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>Create Workout Plan</h2>
+
+        
+            <label for="workoutName">Workout Name:</label>
+            <input type="text" id="workoutName" name="workoutName" required>
+
+            <label for="exercises">Exercises:</label>
+            <textarea id="exercises" name="exercises" rows="4" required></textarea>
+
+            <label for="duration">Duration (minutes):</label>
+            <input type="number" id="duration" name="duration" min="1" required>
+
+            <label for="intensity">Intensity:</label>
+            <select id="intensity" name="intensity" required>
+                <option value="Low">Low</option>
+                <option value="Medium">Medium</option>
+                <option value="High">High</option>
+            </select>
+
+            <button type="button" id="saveWorkout">Save Plan</button>
+       
+    </div>
+   
+</div>
+</form>
+
+<!-- Modal Structure -->
+<form id="workoutForm2">
+    <div id="workoutModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Change Workout Plan</h2>
+        <input type="text" id="workoutName2" />
+        <textarea id="exercises2"></textarea>
+        <input type="text" id="duration2" />
+        <input type="text" id="intensity2" />
+        <button id="saveButton">Save</button>
+        <button id="deleteButton">Delete</button>
+        <button id="closeModal">Close</button>
+    </div>
+    </form>
+
+<script>
+
+    window.addEventListener("load", async function () {
+        const logDateInput = document.getElementById("logDate");
+        const today = new Date().toISOString().split('T')[0];
+        logDateInput.value = today;
+    
+        const username = sessionStorage.getItem('username');
+        const workoutChecklistContainer = document.getElementById('workoutChecklist');
+        const selectedDate = logDateInput.value;
+        
+
+
+
+        try {
+            // Fetch workouts and statuses for the user
+            const workouts = await fetchWorkouts(username);
+            if (!workouts) {
+                console.log('No workouts found.');
+                return;
+            }
+    
+            const workoutStatuses = await fetchWorkoutStatuses(username, selectedDate);
+            if (!workoutStatuses) {
+                console.log('No workout statuses found.');
+                return;
+            }
+    
+            // Clear previous checklist entries
+            workoutChecklistContainer.innerHTML = '';
+    
+            // If no workouts, inform the user
+            if (workouts.length === 0) {
+                workoutChecklistContainer.innerHTML = '<p>No workouts found.</p>';
+                return;
+            }
+    
+            // Create and display the checklist of workouts
+            workouts.forEach(workout => {
+                const workoutItem = createWorkoutItem(workout, workoutStatuses);
+                workoutChecklistContainer.appendChild(workoutItem);
+            });
+    
+            // Update checkboxes after displaying the list
+            updateCheckboxes(workoutStatuses, workouts);
+    
+        } catch (error) {
+            console.error('Error during page load:', error);
+            alert('An error occurred while fetching data.');
+        }
+
+    });
+    
+
+
+
+   // Get modal elements
+var modal = document.getElementById('createWorkoutModal');
+var btn = document.getElementById('createWorkoutBtn');
+var span = document.getElementsByClassName('close')[0];
+
+document.getElementById('createWorkoutBtn').onclick = async function() {
+    const username = sessionStorage.getItem('username'); // Get username from session storage
+
+    try {
+        // Fetch the count of workouts for the user
+        const response = await fetch(`/check-workouts/${username}`);
+        
+        if (!response.ok) {
+            // Handle error if the fetch fails
+            alert('Error checking workout count.');
+            return;
+        }
+
+        const data = await response.json();
+        const workoutCount = data.count; // Get the workout count
+
+        if (workoutCount >= 10) {
+            // Display a warning if the user has already created 10 workouts
+            alert('You cannot create more than 10 workout plans.');
+            return; // Prevent further actions (opening the modal)
+        }
+
+        // If workout count is less than 10, open the modal to create a new workout
+        document.getElementById('createWorkoutModal').style.display = 'block';
+    } catch (error) {
+        console.error('Error checking workout count:', error);
+        alert('An error occurred while checking the workout count.');
+    }
+};
+
+// Close modal when "x" is clicked
+span.onclick = function() {
+    modal.style.display = 'none';
+}
+
+// Close modal when clicking outside of modal
+window.onclick = function(event) {
+    if (event.target == modal) {
+        modal.style.display = 'none';
+    }
+}
+
+
+
+
+// Handle form submission
+document.getElementById('saveWorkout').onclick = async function(event) {
+    event.preventDefault();
+
+    const username = sessionStorage.getItem("username");
+    const name = document.getElementById('workoutName').value;
+    const exercises = document.getElementById('exercises').value;
+    const duration = document.getElementById('duration').value;
+    const intensity = document.getElementById('intensity').value;
+
+    try {
+        // Check how many workout plans the user has created
+        const checkResponse = await fetch(`/check-workouts/${username}`);
+        if (!checkResponse.ok) {
+            throw new Error('Failed to fetch workout count');
+        }
+        const workoutCount = await checkResponse.json();
+
+        if (workoutCount >= 10) {
+            // Display a warning if the user has already created 10 workouts
+            alert('You cannot create more than 10 workout plans.');
+            return; // Prevent further form submission
+        }
+
+        // Proceed with saving the workout plan
+        const response = await fetch("/log-workout", {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username, name, exercises, duration, intensity }),
+        });
+
+        if (response.ok) {
+            console.log('Workout saved successfully!');
+        } else {
+            console.error('Failed to save workout:', await response.json());
+        }
+    } catch (error) {
+        console.error('Error:', error);
+    }
+
+    // Optionally reset the form
+    document.getElementById('workoutForm').reset();
+
+    // Close modal after saving
+    document.getElementById('createWorkoutModal').style.display = 'none';
+};
+
+
+
+document.addEventListener('DOMContentLoaded', async () => {
+    const username = sessionStorage.getItem('username');
+    const workoutChecklistContainer = document.getElementById('workoutChecklist');
+    const logDateInput = document.getElementById('logDate');
+    
+
+        // Set today's date as the default value for the date input
+        if (!logDateInput.value) {
+            const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD format
+            logDateInput.value = today;
+        }
+    
+    let selectedDate = logDateInput.value;
+    let workoutStatuses = [];
+
+    try {
+        // Fetch workouts and statuses for the user
+        const workouts = await fetchWorkouts(username);
+        if (!workouts) {
+            console.log('No workouts found.');
+            return;
+        }
+
+        workoutStatuses = await fetchWorkoutStatuses(username, selectedDate);
+        if (!workoutStatuses || workoutStatuses.length === 0) {
+            // No workout statuses found for the selected date
+            alert('No workout statuses found for the selected date.');
+            // Reset checkboxes to their default state (unticked)
+            
+            return;
+        }
+
+        // Clear previous checklist entries
+        workoutChecklistContainer.innerHTML = '';
+
+        // If no workouts, inform the user
+        if (workouts.length === 0) {
+            workoutChecklistContainer.innerHTML = '<p>No workouts found.</p>';
+            return;
+        }
+
+        // Create and display the checklist of workouts
+        workouts.forEach(workout => {
+            const workoutItem = createWorkoutItem(workout, workoutStatuses);
+            workoutChecklistContainer.appendChild(workoutItem);
+        });
+
+        // Update checkboxes after displaying the list
+        updateCheckboxes(workoutStatuses, workouts);
+
+    } catch (error) {
+        console.error('Error during page load:', error);
+        alert('An error occurred while fetching data.');
+    }
+
+    logDateInput.addEventListener('change', async (event) => {
+        selectedDate = new Date(event.target.value).toISOString().split('T')[0];
+        workoutStatuses = await fetchWorkoutStatuses(username, selectedDate);
+    
+        if (!workoutStatuses || workoutStatuses.length === 0) {
+            // No workout statuses found for the selected date
+            alert('No workout statuses found for the selected date.');
+    
+            // Reset checkboxes to their default state (unticked)
+            resetCheckboxes(workoutStatuses); // Reset checkboxes without updating statuses
+            return;
+        }
+    
+        // If workout statuses are found, update the checkboxes
+        updateCheckboxes(workoutStatuses); // Update checkboxes with new workout statuses
+    });
+    
+});
+
+function resetCheckboxes() {
+    // Select all checkboxes that represent workouts
+    const checkboxes = document.querySelectorAll('[id^="workout-"]'); // Select all checkboxes with workout- prefix
+    
+    // Reset each checkbox to unticked state
+    checkboxes.forEach(checkbox => {
+        checkbox.checked = false; // Untick the checkbox
+    });
+}
+
+
+
+
+// Function to create a workout item with checkbox and details button
+function createWorkoutItem(workout, workoutStatuses) {
+    const workoutItem = document.createElement('div');
+    workoutItem.classList.add('workout-item');
+    workoutItem.style.display = 'flex';
+    workoutItem.style.alignItems = 'center';
+    workoutItem.style.margin = '5px 0';
+
+    const checkbox = document.createElement('input');
+    checkbox.type = 'checkbox';
+    checkbox.id = `workout-${workout._id.toString()}`;
+    checkbox.value = workout._id.toString();  // Also convert value to string
+
+
+
+    const label = document.createElement('label');
+    label.textContent = workout.name;
+    label.style.marginLeft = '10px';
+
+    const detailsButton = document.createElement('button');
+    detailsButton.textContent = 'Details';
+    detailsButton.style.marginLeft = '10px';
+
+    detailsButton.addEventListener('click', () => {
+        openWorkoutModal(workout); // Open modal with the workout details
+    });
+
+    workoutItem.appendChild(checkbox);
+    workoutItem.appendChild(label);
+    workoutItem.appendChild(detailsButton);
+
+    return workoutItem;
+}
+
+// Function to save updated workout statuses
+async function saveWorkoutStatuses(workoutChecklistContainer, username, date) {
+    const updatedWorkouts = [];
+    const checkboxes = workoutChecklistContainer.querySelectorAll('input[type="checkbox"]');
+    
+    checkboxes.forEach(checkbox => {
+        const workoutId = checkbox.value;
+        const status = checkbox.checked ? 'Yes' : 'No';
+        updatedWorkouts.push({ id: workoutId, status, date });
+    });
+
+    try {
+        const response = await fetch('/update-workout-status', {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username, updatedWorkouts }),
+        });
+
+        if (!response.ok) throw new Error('Error saving workout status');
+
+        alert('Workout statuses updated successfully.');
+        location.reload(); // Refresh the page to show updated status
+
+    } catch (error) {
+        console.error('Error updating workout status:', error);
+        alert('An error occurred while saving workout status.');
+    }
+}
+
+
+
+
+// Function to open the workout modal and populate it with the workout data
+// Open the modal and populate it with workout plan details
+function openWorkoutModal(workout) {
+    // Get modal elements
+    const modal = document.getElementById('workoutModal');
+    const id = workout._id; // Assuming _id is the unique identifier in your MongoDB
+    const username = sessionStorage.getItem("username");
+    const nameInput = document.getElementById('workoutName2');
+    const exercisesInput = document.getElementById('exercises2');
+    const durationInput = document.getElementById('duration2');
+    const intensityInput = document.getElementById('intensity2');
+    const closeModalButton = document.getElementById('closeModal');
+
+    // Populate modal fields with the workout data
+    nameInput.value = workout.name;
+    exercisesInput.value = workout.exercises;
+    durationInput.value = workout.duration;
+    intensityInput.value = workout.intensity;
+
+    // Store the workout id in the modal
+    modal.setAttribute("data-workout-id", id);
+
+    // Show the modal
+    modal.style.display = 'block';
+
+    // Close the modal when the close button is clicked
+    closeModalButton.onclick = () => {
+        modal.style.display = 'none';
+    };
+}
+
+// Save the workout plan when the save button is clicked
+document.getElementById("saveButton").addEventListener("click", async function (event) {
+    event.preventDefault(); // Prevent form submission
+
+    const modal = document.getElementById('workoutModal');
+    const id = modal.getAttribute("data-workout-id"); // Get the workout id from the modal
+    const name = document.getElementById('workoutName2').value;
+    const exercises = document.getElementById('exercises2').value;
+    const duration = parseInt(document.getElementById('duration2').value, 10);
+    const intensity = document.getElementById('intensity2').value;
+
+    // Validate inputs
+    if (!id || !name || !exercises || isNaN(duration) || duration <= 0 || !['Low', 'Medium', 'High'].includes(intensity)) {
+        alert('Please provide valid inputs for all fields.');
+        return;
+    }
+
+    try {
+        const response = await fetch('/update-workout', {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id, name, exercises, duration, intensity }),
+        });
+
+        if (!response.ok) throw new Error('Error updating workout plan');
+
+        alert('Workout plan updated successfully.');
+        document.getElementById('workoutModal').style.display = 'none'; // Close the modal
+        location.reload(); // Refresh the workout list
+
+    } catch (error) {
+        console.error('Error updating workout plan:', error);
+        alert('An error occurred while updating the workout plan.');
+    }
+});
+
+// Delete the workout plan when the delete button is clicked
+document.getElementById("deleteButton").addEventListener("click", async function (event) {
+    event.preventDefault(); // Prevent form submission
+    const modal = document.getElementById('workoutModal');
+    const id = modal.getAttribute("data-workout-id"); // Get the workout id from the modal
+
+            if (confirm('Are you sure you want to delete this workout?')) {
+                try {
+                    const response = await fetch('/delete-workout', {
+                        method: 'DELETE',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ id}),
+                    });
+
+                    if (!response.ok) throw new Error('Error deleting workout plan');
+
+                    alert('Workout plan deleted successfully.');
+                    location.reload(); // Refresh the workout list after deletion
+
+                } catch (error) {
+                    console.error('Error deleting workout plan:', error);
+                    alert('An error occurred while deleting the workout plan.');
+                }
+            }
+});
+
+
+// Function to fetch workouts for the user
+async function fetchWorkouts(username) {
+    if (!username) {
+        console.error('Username is required to fetch workouts.');
+        return null;
+    }
+
+    try {
+        const response = await fetch(`/get-workouts/${username}`);
+        if (!response.ok) {
+            throw new Error(`Error fetching workouts. Status: ${response.status}`);
+        }
+        return await response.json(); // Return the array of workouts
+    } catch (error) {
+        console.error('Error fetching workouts:', error);
+        alert('An error occurred while fetching workouts.');
+        return null;
+    }
+}
+
+// Function to fetch workout statuses for a specific date
+async function fetchWorkoutStatuses(username, date) {
+    if (!username || !date) {
+        console.error('Username and date are required to fetch workout statuses.');
+        return null;
+    }
+
+    console.log(`Fetching workout statuses for username: ${username}, date: ${date}`);
+
+    try {
+        const response = await fetch(`/get-workout-statuses?username=${username}&date=${date}`);
+        if (!response.ok) {
+            throw new Error(`Error fetching workout statuses. Status: ${response.status}`);
+        }
+        return await response.json();
+    } catch (error) {
+        console.error('Error fetching workout statuses:', error);
+        alert('An error occurred while fetching workout statuses.');
+        return null;
+    }
+}
+
+function updateCheckboxes(workoutStatuses) {
+    workoutStatuses.forEach(status => {
+        const workoutId = status.workoutId._id.toString(); // Access the _id field of workoutId object
+        const checkbox = document.getElementById(`workout-${workoutId}`); // Use the correct workoutId as a string
+        
+        console.log(`Attempting to find checkbox with ID: workout-${workoutId}`); // Log the ID being searched
+
+        if (checkbox) {
+            checkbox.checked = status.status === 'Yes';  // Update checkbox state based on status
+            console.log(`Checkbox found and updated: workout-${workoutId} | Status: ${status.status}`); // Log success
+        } else {
+            console.log(`Checkbox with ID workout-${workoutId} not found`);  // Log if checkbox is not found
+        }
+    });
+}
+
+
+// Add an event listener to handle the log button click
+document.getElementById('Logcheck').addEventListener('click', async function(event) {
+    event.preventDefault(); // Prevent default behavior (e.g., form submission)
+
+    const username = sessionStorage.getItem('username');
+    const logDateInput = document.getElementById('logDate');
+    const selectedDate = new Date(logDateInput.value).toISOString().split('T')[0]; // Get the selected date in ISO format
+
+    // Fetch the workout checklist container
+    const workoutChecklistContainer = document.getElementById('workoutChecklist');
+
+    // Call the save function to store the workout statuses
+    await saveWorkoutStatuses(workoutChecklistContainer, username, selectedDate);
+});
+
+</script>
+
+</html>
